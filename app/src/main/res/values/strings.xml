@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">ThreadTales-app</string>
+    <!-- Home Screen String -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Hai_user">Hai, User!</string>
+    <string name="points">Points</string>
+    <string name="selengkapnya">selengkapnya</string>
+    <string name="kursus">Kursus</string>
+    <string name="video">Video</string>
+    <string name="pola">Pola</string>
+    <string name="artikel">Artikel</string>
+    <!-- Login Screen String -->
+    <string name="masuk">Masuk</string>
+    <string name="masuk_desc">Masukkan email dan kata sandi kamu yang terdaftar di Aplikasi</string>
+    <string name="email">Email</string>
+    <string name="sandi">Kata Sandi</string>
+    <string name="lupa_sandi">lupa kata sandi?</string>
+    <string name="atau">Atau masuk dengan</string>
+    <string name="google">Google</string>
+    <string name="belum_akun">Belum memiliki akun?</string>
+    <string name="daftar">Daftar</string>
+    <string name="login_sc">Login Success</string>
+    <string name="login_fail">Login Failed</string>
+    <string name="empty">email or password is empty</string>
+    <!-- Register Screen String -->
+    <string name="daftar_desc">Isi data diri kamu untuk bergabung bersama kami</string>
+    <string name="nama">Nama</string>
+    <string name="telp">Nomor Telepon</string>
+    <string name="syarat">Dengan mendaftar, kamu menyetujui syarat dan ketentuan yang berlaku</string>
+    <string name="sudah_akun">Sudah memiliki akun?</string>
+    <!-- Profile Screen String -->
+    <string name="profil">Profil</string>
+    <string name="order">Order</string>
+    <string name="favorit">Favorit</string>
+    <string name="poin">Poin</string>
+    <string name="aktivitas">Aktivitas</string>
+    <string name="bantuan">Bantuan</string>
+    <string name="notifikasi">Notifikasi</string>
+    <string name="keluar">Keluar</string>
+    <string name="kebijakan">Kebijakan Privasi</string>
+    <string name="layanan">Ketentuan Layanan</string>
+    <string name="tentang">Tentang</string>
+    <string name="akun">Akun</string>
+    <string name="info_lanjutan">Info Lanjutan</string>
+    <!--Edit Profile Screen String -->
+    <string name="edit_profil">Edit profil</string>
+    <string name="edit_foto">Edit foto profile</string>
+    <!-- Poin Screen String -->
+    <string name="setara">Setara dengan Rp</string>
+
+    <!-- Pola Screen String -->
+    <string name="cari_pola">Cari Pola</string>
+    <!--Kursus Screen String-->
+    <string name="kursus_daring">Kursus daring</string>
+    <!--Forum Screen String-->
+    <string name="forum">Forum</string>
+    <string name="cari">Cari</string>
+    <string name="balas">Balas</string>
+
+
+
+</resources>
