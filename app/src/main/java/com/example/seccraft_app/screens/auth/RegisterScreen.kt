@@ -105,7 +105,7 @@ private fun RegisterAkun(
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "createUserWithEmail:success")
 
-                val dataUser = DataUser(null,name, email, number)
+                val dataUser = DataUser("",name, email, number)
                 val currentUser = auth.currentUser
 
                 db.collection("users").document(currentUser?.uid!!)

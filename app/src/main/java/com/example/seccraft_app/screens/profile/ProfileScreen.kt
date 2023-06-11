@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.Accompanist
 import com.example.seccraft_app.Collection.User.DataUser
 import com.example.seccraft_app.navigation.Screens
@@ -387,7 +388,7 @@ private fun UserData(navController: NavHostController) {
             val email = value!!.getString("email").toString()
             val name = value.getString("name").toString()
             val number = value.getString("number").toString()
-            val image = value.getString("image")?.toUri()
+            val image = value.getString("image").toString()
 
             user = user.copy(image, name, email, number)
         }
@@ -406,22 +407,42 @@ private fun UserData(navController: NavHostController) {
                 .padding(top = 30.dp)
                 .height(86.dp)
         ) {
-            Card(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape), colors = CardDefaults.cardColors(
-                    gray_DA
-                )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.user_profile),
-                    contentDescription = "",
-                    contentScale = ContentScale.Crop,
+            if (user.image == ""){
+                Card(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                )
+                        .size(64.dp)
+                        .clip(CircleShape), colors = CardDefaults.cardColors(
+                        gray_DA
+                    )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.user_profile),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                }
+            }else{
+                Card(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape), colors = CardDefaults.cardColors(
+                        gray_DA
+                    )
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = user.image),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                }
             }
+
             Column(
                 modifier = Modifier
                     .padding(start = 8.dp)

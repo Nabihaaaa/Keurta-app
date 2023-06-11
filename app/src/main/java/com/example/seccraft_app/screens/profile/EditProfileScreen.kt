@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.Accompanist
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.Collection.User.DataUser
@@ -54,10 +55,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.jet.firestore.JetFirestore
 
-
 private var dataNumber = ""
 private var dataName = ""
-private var dataUri = null
+private var dataUri : Uri? = null
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -71,7 +71,7 @@ fun EditProfileScreen(navController: NavHostController) {
             val name = value?.getString("name").toString()
             val number = value?.getString("number").toString()
             val email = value?.getString("email").toString()
-            val image = value?.getString("image")?.toUri()
+            val image = value?.getString("image").toString()
             user = user.copy(name = name, number = number, email = email, image = image)
         }
     ) {
@@ -95,7 +95,6 @@ fun EditProfileScreen(navController: NavHostController) {
     }
 }
 
-
 private fun UpdateProfile(
     dataUser: DataUser,
     navController: NavHostController
@@ -105,12 +104,14 @@ private fun UpdateProfile(
     val currentUser = auth.currentUser
 
     val storageReference = FirebaseStorage.getInstance().reference
-    val loc = storageReference.child("PhotoProfileUser")
-    val uploadTask = loc.putFile(dataUser.image!!)
-    val data = dataUser.copy(name = dataName, number = dataNumber)
+    val loc = storageReference.child("ProfileUser/${auth.currentUser!!.uid}/PhotoProfile")
+    val uploadTask = loc.putFile(dataUri!!)
 
-    uploadTask.addOnSuccessListener {
-        it.storage.downloadUrl.addOnSuccessListener {
+    Log.d("ISI URI", "UpdateProfile: ${dataUser.name}")
+
+    uploadTask.addOnSuccessListener { taskSnapshot ->
+        taskSnapshot.storage.downloadUrl.addOnSuccessListener {
+            val data = dataUser.copy(image = it.toString(), name = dataName, number = dataNumber)
             db.collection("users").document(currentUser?.uid!!)
                 .set(data)
                 .addOnSuccessListener { documentReference ->
@@ -212,21 +213,20 @@ fun EditNama(name: String) {
 fun PhotoProfile(auth: FirebaseAuth) {
     var user by remember { mutableStateOf(DataUser()) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val context = LocalContext.current
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageUri = uri
-            user = user.copy(image = imageUri)
+            dataUri = imageUri
         }
 
-    Log.d("IMAGE URI:", "ISINYA: $imageUri")
+    //Log.d("IMAGE URI:", "ISINYA: $imageUri")
 
     JetFirestore(
         path = { document("users/${auth.currentUser!!.uid}") },
         onRealtimeDocumentFetch = { value, exception ->
-            val image = value!!.getString("image")?.toUri()
+            val image = value!!.getString("image").toString()
             user = user.copy(image = image)
         }
     ) {
@@ -237,7 +237,8 @@ fun PhotoProfile(auth: FirebaseAuth) {
                 .fillMaxWidth()
         ) {
             Card(modifier = Modifier.size(64.dp), colors = CardDefaults.cardColors(bg)) {
-                if (user.image == null) {
+                Log.d("Data URI", "ISI DATA URI: $imageUri")
+                if (user.image == "") {
                     Image(
                         painter = painterResource(id = R.drawable.user_profile),
                         contentDescription = "",
@@ -246,41 +247,27 @@ fun PhotoProfile(auth: FirebaseAuth) {
                             .fillMaxSize()
                             .clip(CircleShape)
                     )
-                } else {
+                } else if(dataUri != null){
                     Image(
-                        painter = painterResource(id = R.drawable.user_profile),
+                        painter = rememberAsyncImagePainter(model = dataUri),
                         contentDescription = "",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(CircleShape)
                     )
-
                 }
-//                imageUri?.let {
-//                    if (Build.VERSION.SDK_INT < 20) {
-//                        bitmap.value = MediaStore.Images
-//                            .Media.getBitmap(context.contentResolver, it)
-//                    } else {
-//                        val source = ImageDecoder.createSource(context.contentResolver, it)
-//                        bitmap.value = ImageDecoder.decodeBitmap(source)
-//                    }
-//
-//                }
-
-//                bitmap.value?.let { btm ->
-//                    Image(
-//                        bitmap = btm.asImageBitmap(),
-//                        contentDescription = null,
-//                        contentScale = ContentScale.Crop,
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .clip(CircleShape)
-//                    )
-//                }
-
+                else {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = user.image),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                }
             }
-
 
             Text(
                 text = stringResource(id = R.string.edit_foto),
