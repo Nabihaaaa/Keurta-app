@@ -1,17 +1,10 @@
 package com.example.seccraft_app.screens.profile
 
-import android.content.ContentValues
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
+
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,9 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -37,8 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.Accompanist
@@ -59,7 +48,6 @@ private var dataNumber = ""
 private var dataName = ""
 private var dataUri : Uri? = null
 
-@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun EditProfileScreen(navController: NavHostController) {
     Accompanist().TopBar(color = bg)
@@ -128,8 +116,6 @@ private fun UpdateProfile(
 //            progressDialog.dismiss()
 //        }
     }
-
-
 
 }
 
@@ -207,14 +193,11 @@ fun EditNama(name: String) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoProfile(auth: FirebaseAuth) {
     var user by remember { mutableStateOf(DataUser()) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-
-
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageUri = uri
@@ -238,7 +221,7 @@ fun PhotoProfile(auth: FirebaseAuth) {
         ) {
             Card(modifier = Modifier.size(64.dp), colors = CardDefaults.cardColors(bg)) {
                 Log.d("Data URI", "ISI DATA URI: $imageUri")
-                if (user.image == "") {
+                if (user.image == "" && dataUri == null) {
                     Image(
                         painter = painterResource(id = R.drawable.user_profile),
                         contentDescription = "",

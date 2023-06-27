@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.seccraft_app.Accompanist
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
@@ -43,8 +44,9 @@ private var password: String = ""
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
-    LazyColumn() {
-        item() {
+    Accompanist().TopBar(color = bg)
+    LazyColumn {
+        item {
             Column(
                 modifier = Modifier
                     .fillMaxSize()

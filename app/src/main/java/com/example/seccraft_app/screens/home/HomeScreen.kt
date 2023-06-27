@@ -1,4 +1,4 @@
-package com.example.seccraft_app.screens
+package com.example.seccraft_app.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.seccraft_app.Accompanist
+import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
@@ -241,7 +242,7 @@ private fun fiture(navController: NavHostController) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(1f).clickable {
-                    navController.navigate(Screens.Pola.route)
+                    navController.navigate(BottomBarScreen.Portofolio.route)
                 }
             ) {
                 Card(

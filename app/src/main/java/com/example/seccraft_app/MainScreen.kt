@@ -37,6 +37,7 @@ fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Beranda,
         BottomBarScreen.Forum,
+        BottomBarScreen.Portofolio,
         BottomBarScreen.Aktivitas,
         BottomBarScreen.Profil
     )
@@ -78,7 +79,7 @@ fun RowScope.AddItem(
             navController.navigate(screen.route)
         },
         label = {
-            Text(text = screen.title)
+            Text(text = screen.title, style = MaterialTheme.typography.labelSmall)
         },
         icon = {
             Icon(painter = painterResource(id = screen.icon), contentDescription = "")

@@ -48,14 +48,22 @@
     <!-- Poin Screen String -->
     <string name="setara">Setara dengan Rp</string>
 
-    <!-- Pola Screen String -->
-    <string name="cari_pola">Cari Pola</string>
+    <!-- Portofolio Screen String -->
+    <string name="portofolio">Portofolio</string>
+    <string name="kategori">Kategori</string>
+    <string name="terkini">Terkini</string>
+    <string name="populer">Populer</string>
     <!--Kursus Screen String-->
     <string name="kursus_daring">Kursus daring</string>
     <!--Forum Screen String-->
     <string name="forum">Forum</string>
     <string name="cari">Cari</string>
     <string name="balas">Balas</string>
+    <string name="text">Tuliskan yang ingin di upload pada forum</string>
+    <string name="Edittext">Tuliskan sesuatu …</string>
+    <string name="upload_ke_forum">Upload ke forum</string>
+    <string name="textKomentar">Berikan komentar pada gambar</string>
+    <string name="komentar_forum">Berikan balasan pada forum</string>
 
 
 

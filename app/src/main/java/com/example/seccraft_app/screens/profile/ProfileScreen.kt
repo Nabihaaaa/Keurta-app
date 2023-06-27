@@ -1,5 +1,6 @@
 package com.example.seccraft_app.screens.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,10 +16,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.Accompanist
@@ -27,15 +29,18 @@ import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.ktx.Firebase
 import com.jet.firestore.JetFirestore
-
 
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
+    dataProfileModel: DataProfileModel = viewModel()
 ) {
+    val getData = dataProfileModel.state.value
+    Log.d("ISI GET DATA", "ProfileScreen: $getData")
     Accompanist().TopBar(color = primary)
     Surface(
         color = bg
@@ -50,9 +55,9 @@ fun ProfileScreen(
                             .padding(top = 16.dp)
                             .padding(horizontal = 20.dp)
                     ) {
-                        UserData(navController)
+                        UserData(navController, getData)
                         Fiture(navController)
-                        Akun()
+                        Akun(navController)
                         InfoLanjutan()
                     }
 
@@ -63,7 +68,6 @@ fun ProfileScreen(
 
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,7 +93,10 @@ fun InfoLanjutan() {
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = black_25,
-                modifier = Modifier.padding()
+                modifier = Modifier.padding(),
+                style = LocalTextStyle.current.copy(
+                    platformStyle = PlatformTextStyle(includeFontPadding = false)
+                )
             )
 
             Row(
@@ -105,7 +112,10 @@ fun InfoLanjutan() {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = black_25,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp),
+                    style = LocalTextStyle.current.copy(
+                        platformStyle = PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
@@ -128,7 +138,10 @@ fun InfoLanjutan() {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = black_25,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp),
+                    style = LocalTextStyle.current.copy(
+                        platformStyle = PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
@@ -144,7 +157,7 @@ fun InfoLanjutan() {
                     .wrapContentHeight()
                     .padding(vertical = 16.dp)
             ) {
-                Image(
+                Icon(
                     painter = painterResource(id = R.drawable.information),
                     contentDescription = ""
                 )
@@ -154,7 +167,10 @@ fun InfoLanjutan() {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = black_25,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp),
+                    style = LocalTextStyle.current.copy(
+                        platformStyle = PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
@@ -169,7 +185,7 @@ fun InfoLanjutan() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Akun() {
+fun Akun(navController: NavHostController) {
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(Color.White),
@@ -205,7 +221,10 @@ fun Akun() {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = black_25,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp),
+                    style = LocalTextStyle.current.copy(
+                        platformStyle = PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
@@ -228,7 +247,10 @@ fun Akun() {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = black_25,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp),
+                    style = LocalTextStyle.current.copy(
+                        platformStyle = PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
@@ -251,7 +273,10 @@ fun Akun() {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = black_25,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp),
+                    style = LocalTextStyle.current.copy(
+                        platformStyle = PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
@@ -263,7 +288,10 @@ fun Akun() {
 
             Row(
                 Modifier
-                    .clickable { }
+                    .clickable {
+                        navController.navigate(Screens.Login.route)
+                        Firebase.auth.signOut()
+                    }
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(vertical = 16.dp)
@@ -275,7 +303,10 @@ fun Akun() {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = black_25,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp),
+                    style = LocalTextStyle.current.copy(
+                        platformStyle = PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
@@ -318,7 +349,7 @@ fun Fiture(
                     fontFamily = PoppinsFamily,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color.Black
+                    color = Color.Black,
                 )
 
             }
@@ -378,112 +409,97 @@ fun Fiture(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun UserData(navController: NavHostController) {
-    val auth = Firebase.auth
-    var user by remember { mutableStateOf(DataUser()) }
-
-    JetFirestore(
-        path = { document("users/${auth.currentUser!!.uid}") },
-        onRealtimeDocumentFetch = { value, exception ->
-            val email = value!!.getString("email").toString()
-            val name = value.getString("name").toString()
-            val number = value.getString("number").toString()
-            val image = value.getString("image").toString()
-
-            user = user.copy(image, name, email, number)
-        }
+private fun UserData(navController: NavHostController, user: DataUser) {
+    Text(
+        text = stringResource(id = R.string.profil),
+        fontFamily = PoppinsFamily,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.Black,
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .padding(top = 30.dp)
+            .height(86.dp)
     ) {
-        Text(
-            text = stringResource(id = R.string.profil),
-            fontFamily = PoppinsFamily,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-                .padding(top = 30.dp)
-                .height(86.dp)
-        ) {
-            if (user.image == ""){
-                Card(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape), colors = CardDefaults.cardColors(
-                        gray_DA
-                    )
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.user_profile),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                    )
-                }
-            }else{
-                Card(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape), colors = CardDefaults.cardColors(
-                        gray_DA
-                    )
-                ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(model = user.image),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                    )
-                }
-            }
-
-            Column(
+        if (user.image == "") {
+            Card(
                 modifier = Modifier
-                    .padding(start = 8.dp)
-                    .fillMaxHeight()
+                    .size(64.dp)
+                    .clip(CircleShape), colors = CardDefaults.cardColors(
+                    gray_DA
+                )
             ) {
-
-                Text(
-                    text = user.name,
-                    fontFamily = PoppinsFamily,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
+                Image(
+                    painter = painterResource(id = R.drawable.user_profile),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
                 )
-
-                Text(
-                    text = user.number,
-                    fontFamily = PoppinsFamily,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black,
-                )
-
-                Text(
-                    text = user.email,
-                    fontFamily = PoppinsFamily,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black,
-                )
-
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                painter = painterResource(id = R.drawable.pencil),
-                contentDescription = "",
+        } else {
+            Card(
                 modifier = Modifier
-                    .size(20.dp)
-                    .clickable { navController.navigate(Screens.EditProfile.route) },
-                tint = Color(0x99000000)
-            )
+                    .size(64.dp)
+                    .clip(CircleShape), colors = CardDefaults.cardColors(
+                    gray_DA
+                )
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = user.image),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+            }
         }
+
+        Column(
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .fillMaxHeight()
+        ) {
+
+            Text(
+                text = user.name,
+                fontFamily = PoppinsFamily,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black,
+            )
+
+            Text(
+                text = user.number,
+                fontFamily = PoppinsFamily,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
+                color = Color.Black,
+            )
+
+            Text(
+                text = user.email,
+                fontFamily = PoppinsFamily,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
+                color = Color.Black,
+            )
+
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(
+            painter = painterResource(id = R.drawable.pencil),
+            contentDescription = "",
+            modifier = Modifier
+                .size(20.dp)
+                .clickable { navController.navigate(Screens.EditProfile.route) },
+            tint = Color(0x99000000)
+        )
     }
 
 

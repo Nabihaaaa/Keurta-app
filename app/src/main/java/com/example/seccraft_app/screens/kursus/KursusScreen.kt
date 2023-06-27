@@ -1,4 +1,4 @@
-package com.example.seccraft_app.screens.profile
+package com.example.seccraft_app.screens.kursus
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

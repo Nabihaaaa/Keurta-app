@@ -24,6 +24,8 @@ val gray_DAA = Color(0x4DAAAAAA)
 
 val lightblue = Color(0xFF60A3D9)
 
+val cream = Color(0xFFCFB997)
+
 //color app
 val secondary = Color(0xFF446E5C)
 val green_6A = Color(0xFF7DC383)

@@ -1,17 +1,20 @@
 package com.example.seccraft_app
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.seccraft_app.navigation.Screens
-import com.example.seccraft_app.screens.ForumScreen
-import com.example.seccraft_app.screens.HomeScreen
-import com.example.seccraft_app.screens.PolaScreen
+import com.example.seccraft_app.screens.home.HomeScreen
+import com.example.seccraft_app.screens.portofolio.PortofolioScreen
 import com.example.seccraft_app.screens.SplashScreen
 import com.example.seccraft_app.screens.auth.LoginScreen
 import com.example.seccraft_app.screens.auth.RegisterScreen
+import com.example.seccraft_app.screens.forum.ForumScreen
+import com.example.seccraft_app.screens.forum.ImageForumScreen
+import com.example.seccraft_app.screens.forum.ReplyScreen
+import com.example.seccraft_app.screens.forum.TextScreen
 import com.example.seccraft_app.screens.profile.EditProfileScreen
 import com.example.seccraft_app.screens.profile.MyKursus
 import com.example.seccraft_app.screens.profile.PointScreen
@@ -23,6 +26,7 @@ fun MainNavGraph(
     modifier: Modifier,
     navController: NavHostController
 ){
+
     NavHost(modifier = modifier  ,navController = navController, startDestination = Screens.Splash.route){
         composable(Screens.Login.route){
             LoginScreen(navController)
@@ -38,7 +42,6 @@ fun MainNavGraph(
         }
         composable(route = BottomBarScreen.Forum.route){
             ForumScreen(navController)
-
         }
         composable(route = BottomBarScreen.Aktivitas.route){
 
@@ -46,8 +49,8 @@ fun MainNavGraph(
         composable(route = BottomBarScreen.Profil.route){
             ProfileScreen(navController)
         }
-        composable(Screens.Pola.route){
-            PolaScreen(navController)
+        composable(BottomBarScreen.Portofolio.route){
+            PortofolioScreen(navController)
         }
         composable(Screens.Point.route){
             PointScreen(navController)
@@ -57,6 +60,16 @@ fun MainNavGraph(
         }
         composable(Screens.EditProfile.route){
             EditProfileScreen(navController)
+        }
+        composable(Screens.TextForum.route){
+            TextScreen(navController)
+        }
+        composable(Screens.ImageForum.route){
+            ImageForumScreen(navController)
+        }
+        composable(Screens.ReplyForum.route){
+            ReplyScreen(navController = navController, it.arguments?.getString("documentId")!!)
+
         }
     }
 

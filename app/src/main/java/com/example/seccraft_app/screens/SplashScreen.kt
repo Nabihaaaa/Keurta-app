@@ -15,9 +15,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.seccraft_app.Accompanist
+import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.bg
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,6 +31,12 @@ fun SplashScreen(navController: NavController) = Box(
         .fillMaxHeight()
 )
 {
+    val auth = Firebase.auth
+    val currentUser = auth.currentUser
+    var screen = Screens.Login.route
+    if (currentUser != null) {
+        screen = BottomBarScreen.Beranda.route
+    }
     Accompanist().TopBar(color = bg)
     val scale = remember {
         androidx.compose.animation.core.Animatable(0.0f)
@@ -42,7 +51,7 @@ fun SplashScreen(navController: NavController) = Box(
         )
         delay(1000)
 //This stop to appear splash screen on pressing back button
-        navController.navigate(Screens.Login.route) {
+        navController.navigate(screen) {
             popUpTo(Screens.Splash.route) {
                 inclusive = true
             }

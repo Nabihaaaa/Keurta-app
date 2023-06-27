@@ -15,6 +15,11 @@ sealed class BottomBarScreen(
         title = "Forum",
         icon = R.drawable.icon__people
     )
+    object Portofolio:BottomBarScreen(
+        route = "Porto",
+        title = "Portofolio",
+        icon = R.drawable.portofolio
+    )
     object Aktivitas:BottomBarScreen(
         route = "Aktivitas",
         title = "Aktivitas",
