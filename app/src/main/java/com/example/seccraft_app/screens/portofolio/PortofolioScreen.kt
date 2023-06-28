@@ -1,11 +1,14 @@
 package com.example.seccraft_app.screens.portofolio
 
+
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,20 +16,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import com.example.seccraft_app.BottomBarScreen
+import com.example.seccraft_app.Collection.User.DataUser
+import com.example.seccraft_app.Collection.portofolio.DataPortofolio
+import com.example.seccraft_app.Collection.portofolio.LikePortofolio
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.jet.firestore.JetFirestore
+import com.jet.firestore.getListOfObjects
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PortofolioScreen(navController: NavHostController) {
+fun PortofolioScreen(
+    navController: NavHostController,
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -141,89 +153,186 @@ fun PortofolioScreen(navController: NavHostController) {
 
             }
 
-            //item Pola
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(top = 12.dp, start = 20.dp, end = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 12.dp)
+            var dataPortofolio by remember { mutableStateOf(listOf<DataPortofolio>()) }
+
+            JetFirestore(
+                path = { collection("portofolio") },
+                onRealtimeCollectionFetch = { values, exception ->
+                    dataPortofolio = values.getListOfObjects()
+                },
             ) {
-                items(6) { index ->
-                    CardItem(
-                        image = painterResource(id = R.drawable.image_rotan),
-                        title = "Tas Rotan",
-                        name = "Annisa",
-                    )
+                //item Pola
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(top = 12.dp, start = 20.dp, end = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 12.dp)
+                ) {
+                    items(dataPortofolio) { portofolio ->
+                        var user by remember { mutableStateOf(DataUser()) }
+                        JetFirestore(
+                            path = { document("users/${portofolio.idUser}") },
+                            onRealtimeDocumentFetch = { value, exception ->
+                                val email = value!!.getString("email").toString()
+                                val name = value.getString("name").toString()
+                                val number = value.getString("number").toString()
+                                val image = value.getString("image").toString()
+
+                                user = user.copy(image, name, email, number)
+                            }
+                        ) {
+
+                            val name = user.name.substringBefore(' ')
+
+                            val title = if (portofolio.judul.length < 8) {
+                                portofolio.judul.substring(0, portofolio.judul.length)
+                            } else {
+                                portofolio.judul.substring(0, 8) + "..."
+                            }
+
+                            Log.d("itung String", "PortofolioScreen: ${title}")
+
+                            CardItem(
+                                id = portofolio.id,
+                                idUser = portofolio.idUser,
+                                image = portofolio.image,
+                                title = title,
+                                name = name
+                            )
+
+                        }
+                    }
                 }
             }
+
         }
-
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardItem(image: Painter, title: String, name: String) {
-    Card(
-        colors = CardDefaults.cardColors(primary),
-        modifier = Modifier.wrapContentHeight(),
-        elevation = CardDefaults.cardElevation(2.dp),
+fun CardItem(image: String, title: String, name: String, idUser: String, id: String) {
+
+    var likeCount by remember { mutableStateOf(0) }
+    var dataLike by remember { mutableStateOf(listOf<LikePortofolio>()) }
+
+    JetFirestore(
+        path = { collection("portofolio/$id/like") },
+        onRealtimeCollectionFetch = { values, exception ->
+            dataLike = values.getListOfObjects()
+        },
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Card(
-                colors = CardDefaults.cardColors(Color.Gray),
-                shape = RoundedCornerShape(bottomStart = 0.dp, bottomEnd = 0.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(130.dp)
-            ) {
-                Image(painter = image, contentDescription = "", modifier = Modifier.fillMaxSize())
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .padding(bottom = 14.dp, top = 8.dp)
-            ) {
-                Column() {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(top = 2.dp),
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.love),
-                        contentDescription = "",
-                        tint = Color.Black,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = "5",
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(top = 2.dp)
-                    )
-                }
 
-
-            }
-
-
+        likeCount = dataLike.count {
+            it.like
         }
 
+        Card(
+            colors = CardDefaults.cardColors(primary),
+            modifier = Modifier.wrapContentHeight(),
+            elevation = CardDefaults.cardElevation(2.dp),
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(Color.Gray),
+                    shape = RoundedCornerShape(bottomStart = 0.dp, bottomEnd = 0.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = image),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                        .padding(bottom = 14.dp, top = 8.dp)
+                ) {
+                    Column() {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    val auth = Firebase.auth
+                    val idCurrentUser = auth.currentUser!!.uid
+                    var likeData by remember { mutableStateOf(LikePortofolio()) }
+
+                    JetFirestore(
+                        path = { document("portofolio/$id/like/$idCurrentUser") },
+                        onRealtimeDocumentFetch = { value, exception ->
+
+                            val idUserLike = value!!.getString("idUser").toString()
+                            val like = value.getBoolean("like")
+
+                            likeData = if (like == null) likeData.copy(
+                                idUserLike,
+                                false
+                            ) else likeData.copy(idUserLike, like)
+
+                            Log.d("Isi Like", "CardItem: $like")
+                        }
+                    ) {
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.love),
+                                contentDescription = "",
+                                tint = if (likeData.like) Color.Red else Color.Black,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clickable {
+                                        if (likeData.like) {
+                                            LikePto(id, false)
+                                        } else {
+                                            LikePto(id, true)
+                                        }
+                                    }
+                            )
+                            Text(
+                                text = likeCount.toString(),
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(top = 2.dp)
+                            )
+                        }
+                    }
+
+                }
+
+
+            }
+
+        }
     }
+
+}
+
+fun LikePto(id: String, like: Boolean) {
+    val auth = Firebase.auth
+    val db = Firebase.firestore
+    val idCurrentUser = auth.currentUser!!.uid
+
+    val data = LikePortofolio(idUser = idCurrentUser, like = like)
+
+    db.collection("portofolio/$id/like/").document(idCurrentUser).set(data)
+
 
 }
 

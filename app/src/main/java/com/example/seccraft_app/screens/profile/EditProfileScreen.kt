@@ -46,7 +46,7 @@ import com.jet.firestore.JetFirestore
 
 private var dataNumber = ""
 private var dataName = ""
-private var dataUri : Uri? = null
+private var dataUri: Uri? = null
 
 @Composable
 fun EditProfileScreen(navController: NavHostController) {
@@ -93,28 +93,37 @@ private fun UpdateProfile(
 
     val storageReference = FirebaseStorage.getInstance().reference
     val loc = storageReference.child("ProfileUser/${auth.currentUser!!.uid}/PhotoProfile")
-    val uploadTask = loc.putFile(dataUri!!)
 
-    Log.d("ISI URI", "UpdateProfile: ${dataUser.name}")
+    if(dataUri!= null){
+        val uploadTask = loc.putFile(dataUri!!)
 
-    uploadTask.addOnSuccessListener { taskSnapshot ->
-        taskSnapshot.storage.downloadUrl.addOnSuccessListener {
-            val data = dataUser.copy(image = it.toString(), name = dataName, number = dataNumber)
-            db.collection("users").document(currentUser?.uid!!)
-                .set(data)
-                .addOnSuccessListener { documentReference ->
-                    navController.navigate(BottomBarScreen.Profil.route)
-                }
-                .addOnFailureListener { e ->
+        uploadTask.addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.storage.downloadUrl.addOnSuccessListener {
+                val data = dataUser.copy(image = it.toString(), name = dataName, number = dataNumber)
+                db.collection("users").document(currentUser?.uid!!)
+                    .set(data)
+                    .addOnSuccessListener { documentReference ->
+                        navController.navigate(BottomBarScreen.Profil.route)
+                    }
+                    .addOnFailureListener { e ->
 
-                }
+                    }
+            }
+
+        }.addOnFailureListener {
+
+
         }
+    }else{
+        val data = dataUser.copy(name = dataName, number = dataNumber)
+        db.collection("users").document(currentUser?.uid!!)
+            .set(data)
+            .addOnSuccessListener { documentReference ->
+                navController.navigate(BottomBarScreen.Profil.route)
+            }
+            .addOnFailureListener { e ->
 
-    }.addOnFailureListener {
-//        Toast.makeText(context, "Failed to Upload", Toast.LENGTH_SHORT).show()
-//        if (progressDialog.isShowing) {
-//            progressDialog.dismiss()
-//        }
+            }
     }
 
 }
@@ -230,7 +239,7 @@ fun PhotoProfile(auth: FirebaseAuth) {
                             .fillMaxSize()
                             .clip(CircleShape)
                     )
-                } else if(dataUri != null){
+                } else if (dataUri != null) {
                     Image(
                         painter = rememberAsyncImagePainter(model = dataUri),
                         contentDescription = "",
@@ -239,8 +248,7 @@ fun PhotoProfile(auth: FirebaseAuth) {
                             .fillMaxSize()
                             .clip(CircleShape)
                     )
-                }
-                else {
+                } else {
                     Image(
                         painter = rememberAsyncImagePainter(model = user.image),
                         contentDescription = "",
