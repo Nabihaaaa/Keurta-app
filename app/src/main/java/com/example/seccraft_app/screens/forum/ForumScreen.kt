@@ -367,7 +367,7 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(150.dp),
+                                        .height(250.dp),
                                     colors = CardDefaults.cardColors(
                                         gray_DA
                                     )
@@ -375,7 +375,7 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                     Image(
                                         painter = rememberAsyncImagePainter(model = item.image),
                                         contentDescription = "",
-                                        //contentScale = ContentScale.Crop,
+                                        contentScale = ContentScale.FillBounds,
                                         modifier = Modifier.fillMaxSize()
                                     )
                                 }

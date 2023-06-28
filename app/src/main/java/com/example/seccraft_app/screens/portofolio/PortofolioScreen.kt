@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -27,6 +29,7 @@ import com.example.seccraft_app.Collection.User.DataUser
 import com.example.seccraft_app.Collection.portofolio.DataPortofolio
 import com.example.seccraft_app.Collection.portofolio.LikePortofolio
 import com.example.seccraft_app.R
+import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -39,175 +42,191 @@ import com.jet.firestore.getListOfObjects
 fun PortofolioScreen(
     navController: NavHostController,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(bg)
-    ) {
-        Card(
-            modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 0.dp,
-                bottomStart = 25.dp,
-                bottomEnd = 25.dp
-            ),
-            colors = CardDefaults.cardColors(
-                primary
-            )
-        ) {
 
-
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate(Screens.AddPortofolio.route) },
+                shape = CircleShape,
+                containerColor = secondary
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.plus),
+                    contentDescription = "",
+                    tint = Color.White,
+                )
+            }
         }
-        Column(modifier = Modifier.padding(top = 28.dp)) {
-            Text(
-                text = stringResource(id = R.string.portofolio),
-                style = MaterialTheme.typography.titleLarge,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 28.dp, start = 20.dp)
-            )
-
-            var kategoriText by remember { mutableStateOf("") }
-            TextField(
-                value = kategoriText,
-                readOnly = true,
-                placeholder = { Text(stringResource(id = R.string.kategori)) },
-                onValueChange = {
-                    kategoriText = it
-                },
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(bg)
+                .padding(it)
+        ) {
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp)),
-                textStyle = MaterialTheme.typography.labelMedium,
-                trailingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.arrow_down),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .size(18.dp)
-                    )
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = Color.Black,
-                    placeholderColor = icon_faded,
-                    cursorColor = Color.Black,
-                    containerColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
+                    .height(100.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(
+                    topStart = 0.dp,
+                    topEnd = 0.dp,
+                    bottomStart = 25.dp,
+                    bottomEnd = 25.dp
+                ),
+                colors = CardDefaults.cardColors(
+                    primary
+                )
+            ) {
+
+
+            }
+            Column(modifier = Modifier.padding(top = 28.dp)) {
+                Text(
+                    text = stringResource(id = R.string.portofolio),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.Black,
+                    modifier = Modifier.padding(bottom = 28.dp, start = 20.dp)
                 )
 
-            )
-
-            // Terkini dan populer
-
-            var selected by remember {
-                mutableStateOf(true)
-            }
-
-            Row(modifier = Modifier.padding(start = 20.dp, top = 28.dp)) {
-                Card(
+                var kategoriText by remember { mutableStateOf("") }
+                TextField(
+                    value = kategoriText,
+                    readOnly = true,
+                    placeholder = { Text(stringResource(id = R.string.kategori)) },
+                    onValueChange = {
+                        kategoriText = it
+                    },
                     modifier = Modifier
-//                        .width(72.dp)
-//                        .height(35.dp)
-                        .clickable {
-                            selected = true
-                        },
-                    colors = if (selected) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
-                        Color.White
-                    ),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.terkini),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = if (selected) Color.White else secondary,
-                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                        .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp)),
+                    textStyle = MaterialTheme.typography.labelMedium,
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.arrow_down),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .padding(15.dp)
+                                .size(18.dp)
+                        )
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = Color.Black,
+                        placeholderColor = icon_faded,
+                        cursorColor = Color.Black,
+                        containerColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
                     )
+
+                )
+
+                // Terkini dan populer
+
+                var selected by remember {
+                    mutableStateOf(true)
                 }
 
-                Card(
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .clickable {
-                            selected = false
-                        },
-                    colors = if (!selected) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
-                        Color.White
-                    ),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.populer),
-                        color = if (!selected) Color.White else secondary,
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
-                    )
+                Row(modifier = Modifier.padding(start = 20.dp, top = 28.dp)) {
+                    Card(
+                        modifier = Modifier
+                            .clickable {
+                                selected = true
+                            },
+                        colors = if (selected) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
+                            Color.White
+                        ),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.terkini),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = if (selected) Color.White else secondary,
+                            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+                        )
+                    }
+
+                    Card(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .clickable {
+                                selected = false
+                            },
+                        colors = if (!selected) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
+                            Color.White
+                        ),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.populer),
+                            color = if (!selected) Color.White else secondary,
+                            style = MaterialTheme.typography.labelMedium,
+                            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+                        )
+                    }
+
                 }
 
-            }
+                var dataPortofolio by remember { mutableStateOf(listOf<DataPortofolio>()) }
 
-            var dataPortofolio by remember { mutableStateOf(listOf<DataPortofolio>()) }
-
-            JetFirestore(
-                path = { collection("portofolio") },
-                onRealtimeCollectionFetch = { values, exception ->
-                    dataPortofolio = values.getListOfObjects()
-                },
-            ) {
-                //item Pola
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(top = 12.dp, start = 20.dp, end = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 12.dp)
+                JetFirestore(
+                    path = { collection("portofolio") },
+                    onRealtimeCollectionFetch = { values, exception ->
+                        dataPortofolio = values.getListOfObjects()
+                    },
                 ) {
-                    items(dataPortofolio) { portofolio ->
-                        var user by remember { mutableStateOf(DataUser()) }
-                        JetFirestore(
-                            path = { document("users/${portofolio.idUser}") },
-                            onRealtimeDocumentFetch = { value, exception ->
-                                val email = value!!.getString("email").toString()
-                                val name = value.getString("name").toString()
-                                val number = value.getString("number").toString()
-                                val image = value.getString("image").toString()
+                    //item Pola
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(top = 12.dp, start = 20.dp, end = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 12.dp)
+                    ) {
+                        items(dataPortofolio) { portofolio ->
+                            var user by remember { mutableStateOf(DataUser()) }
+                            JetFirestore(
+                                path = { document("users/${portofolio.idUser}") },
+                                onRealtimeDocumentFetch = { value, exception ->
+                                    val email = value!!.getString("email").toString()
+                                    val name = value.getString("name").toString()
+                                    val number = value.getString("number").toString()
+                                    val image = value.getString("image").toString()
 
-                                user = user.copy(image, name, email, number)
+                                    user = user.copy(image, name, email, number)
+                                }
+                            ) {
+
+                                val name = user.name.substringBefore(' ')
+
+                                val title = if (portofolio.judul.length < 8) {
+                                    portofolio.judul.substring(0, portofolio.judul.length)
+                                } else {
+                                    portofolio.judul.substring(0, 8) + "..."
+                                }
+
+                                Log.d("itung String", "PortofolioScreen: ${title}")
+
+                                CardItem(
+                                    id = portofolio.id,
+                                    idUser = portofolio.idUser,
+                                    image = portofolio.image,
+                                    title = title,
+                                    name = name
+                                )
+
                             }
-                        ) {
-
-                            val name = user.name.substringBefore(' ')
-
-                            val title = if (portofolio.judul.length < 8) {
-                                portofolio.judul.substring(0, portofolio.judul.length)
-                            } else {
-                                portofolio.judul.substring(0, 8) + "..."
-                            }
-
-                            Log.d("itung String", "PortofolioScreen: ${title}")
-
-                            CardItem(
-                                id = portofolio.id,
-                                idUser = portofolio.idUser,
-                                image = portofolio.image,
-                                title = title,
-                                name = name
-                            )
-
                         }
                     }
                 }
-            }
 
+            }
         }
     }
 }

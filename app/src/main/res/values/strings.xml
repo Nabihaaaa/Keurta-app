@@ -53,6 +53,10 @@
     <string name="kategori">Kategori</string>
     <string name="terkini">Terkini</string>
     <string name="populer">Populer</string>
+    <string name="upl_image">Upload Image</string>
+    <string name="judul">Judul</string>
+    <string name="deskripsi">Deskripsi</string>
+    <string name="submit">Submit</string>
     <!--Kursus Screen String-->
     <string name="kursus_daring">Kursus daring</string>
     <!--Forum Screen String-->

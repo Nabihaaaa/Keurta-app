@@ -15,6 +15,7 @@ import com.example.seccraft_app.screens.forum.ForumScreen
 import com.example.seccraft_app.screens.forum.ImageForumScreen
 import com.example.seccraft_app.screens.forum.ReplyScreen
 import com.example.seccraft_app.screens.forum.TextScreen
+import com.example.seccraft_app.screens.portofolio.AddPortofolioScreen
 import com.example.seccraft_app.screens.profile.EditProfileScreen
 import com.example.seccraft_app.screens.profile.MyKursus
 import com.example.seccraft_app.screens.profile.PointScreen
@@ -49,7 +50,7 @@ fun MainNavGraph(
         composable(route = BottomBarScreen.Profil.route){
             ProfileScreen(navController)
         }
-        composable(BottomBarScreen.Portofolio.route){
+        composable(route = BottomBarScreen.Portofolio.route){
             PortofolioScreen(navController)
         }
         composable(Screens.Point.route){
@@ -69,7 +70,9 @@ fun MainNavGraph(
         }
         composable(Screens.ReplyForum.route){
             ReplyScreen(navController = navController, it.arguments?.getString("documentId")!!)
-
+        }
+        composable(Screens.AddPortofolio.route){
+            AddPortofolioScreen(navController)
         }
     }
 
