@@ -57,6 +57,7 @@
     <string name="judul">Judul</string>
     <string name="deskripsi">Deskripsi</string>
     <string name="submit">Submit</string>
+    <string name="lihat">lihat semua ></string>
     <!--Kursus Screen String-->
     <string name="kursus_daring">Kursus daring</string>
     <!--Forum Screen String-->

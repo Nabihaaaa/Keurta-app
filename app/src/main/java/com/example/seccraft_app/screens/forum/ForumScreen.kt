@@ -59,8 +59,6 @@ class MinFabItem(
     val identifier: String
 )
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForumScreen(navController: NavHostController) {
@@ -71,13 +69,13 @@ fun ForumScreen(navController: NavHostController) {
     val items = listOf(
         MinFabItem(
             icon = R.drawable.image,
-            label = "Image",
+            label = "",
             identifier = Identifier.ImageForum.name
         ),
 
         MinFabItem(
             icon = R.drawable.pencil__fabs,
-            label = "Teks",
+            label = "",
             identifier = Identifier.TextForum.name
         ),
     )

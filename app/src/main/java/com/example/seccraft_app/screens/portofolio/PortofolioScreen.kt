@@ -2,9 +2,7 @@ package com.example.seccraft_app.screens.portofolio
 
 
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -15,16 +13,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.Collection.User.DataUser
 import com.example.seccraft_app.Collection.portofolio.DataPortofolio
 import com.example.seccraft_app.Collection.portofolio.LikePortofolio
@@ -218,7 +220,12 @@ fun PortofolioScreen(
                                     idUser = portofolio.idUser,
                                     image = portofolio.image,
                                     title = title,
-                                    name = name
+                                    name = name,
+                                    titleFull = portofolio.judul,
+                                    nameFull = user.name,
+                                    imageUser = user.image,
+                                    deskripsi = portofolio.deskripsi,
+                                    kategori = portofolio.kategori
                                 )
 
                             }
@@ -231,12 +238,42 @@ fun PortofolioScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun CardItem(image: String, title: String, name: String, idUser: String, id: String) {
+fun CardItem(
+    image: String,
+    title: String,
+    name: String,
+    idUser: String,
+    id: String,
+    imageUser: String,
+    deskripsi: String,
+    kategori: String,
+    titleFull: String,
+    nameFull: String
+) {
 
     var likeCount by remember { mutableStateOf(0) }
     var dataLike by remember { mutableStateOf(listOf<LikePortofolio>()) }
+    var likeData by remember { mutableStateOf(LikePortofolio()) }
+
+    val showDialog = remember { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        CardItemDetail(
+            titleFull,
+            likeCount,
+            likeData.like,
+            deskripsi,
+            nameFull,
+            imageUser,
+            kategori,
+            image,
+            id
+        ) {
+            showDialog.value = it
+        }
+    }
 
     JetFirestore(
         path = { collection("portofolio/$id/like") },
@@ -251,7 +288,17 @@ fun CardItem(image: String, title: String, name: String, idUser: String, id: Str
 
         Card(
             colors = CardDefaults.cardColors(primary),
-            modifier = Modifier.wrapContentHeight(),
+            modifier = Modifier
+                .wrapContentHeight()
+                .combinedClickable(
+                    onClick = {
+
+                    },
+                    onLongClick = {
+                        showDialog.value = true
+
+                    }
+                ),
             elevation = CardDefaults.cardElevation(2.dp),
         ) {
             Column(
@@ -292,7 +339,7 @@ fun CardItem(image: String, title: String, name: String, idUser: String, id: Str
 
                     val auth = Firebase.auth
                     val idCurrentUser = auth.currentUser!!.uid
-                    var likeData by remember { mutableStateOf(LikePortofolio()) }
+
 
                     JetFirestore(
                         path = { document("portofolio/$id/like/$idCurrentUser") },
@@ -343,6 +390,147 @@ fun CardItem(image: String, title: String, name: String, idUser: String, id: Str
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardItemDetail(
+    title: String,
+    likeCount: Int,
+    like: Boolean,
+    deskripsi: String,
+    name: String,
+    imageUser: String,
+    kategori: String,
+    image: String,
+    id: String,
+    setShowDialog: (Boolean) -> Unit
+) {
+    Dialog(onDismissRequest = { setShowDialog(false) }) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+        ) {
+            Card(
+                colors = CardDefaults.cardColors(primary),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .fillMaxWidth()
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                    ) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = image),
+                            contentDescription = "",
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Row(modifier = Modifier.padding(top = 24.dp)) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontSize = 20.sp,
+                            modifier = Modifier.fillMaxWidth(0.7f)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.love),
+                                contentDescription = "",
+                                tint = if (like) Color.Red else Color.Black,
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .padding(bottom = 2.dp)
+                                    .clickable {
+                                        if (like) {
+                                            LikePto(id, false)
+                                        } else {
+                                            LikePto(id, true)
+                                        }
+
+                                    }
+                            )
+                            Text(
+                                text = likeCount.toString(),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+
+                        }
+                    }
+
+                    Text(
+                        text = deskripsi,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Card(modifier = Modifier.size(32.dp), shape = CircleShape) {
+                            Image(
+                                painter = rememberAsyncImagePainter(model = imageUser),
+                                contentDescription = "",
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+
+                    if (kategori != "") {
+                        Card(
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.padding(top = 24.dp),
+                            colors = CardDefaults.cardColors(
+                                secondary
+                            )
+                        ) {
+                            Text(
+                                text = kategori,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White,
+                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = stringResource(id = R.string.lihat),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.End,
+                        color = secondary,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier
+                            .padding(top = 18.dp)
+                            .fillMaxWidth()
+                    )
+
+
+                }
+            }
+        }
+    }
+
+}
+
 fun LikePto(id: String, like: Boolean) {
     val auth = Firebase.auth
     val db = Firebase.firestore
@@ -355,10 +543,3 @@ fun LikePto(id: String, like: Boolean) {
 
 }
 
-//@Preview(showBackground = true, name = "Pola preview")
-//@Composable
-//fun PolaPreview() {
-//    SeccraftappTheme {
-//        Pola()
-//    }
-//}
