@@ -28,6 +28,13 @@ val Poppins = Typography(
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
 
+    displayLarge = TextStyle(
+        fontFamily = PoppinsFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        platformStyle = PlatformTextStyle(includeFontPadding = false)
+    ),
+
     displayMedium = TextStyle(
         fontFamily = PoppinsFamily,
         fontWeight = FontWeight.SemiBold,

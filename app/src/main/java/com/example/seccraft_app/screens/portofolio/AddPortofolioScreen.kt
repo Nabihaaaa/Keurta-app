@@ -33,6 +33,7 @@ import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.Collection.portofolio.DataPortofolio
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -279,7 +280,7 @@ fun UploadPortofolio(
     navController: NavHostController,
     current: Context
 ) {
-    if (imageUri != null && title != ""  && deskripsi != "") {
+    if (imageUri != null && title != "" && deskripsi != "") {
 
         val db = Firebase.firestore
         val auth = Firebase.auth
@@ -289,17 +290,25 @@ fun UploadPortofolio(
         val storageReference = FirebaseStorage.getInstance().reference
         val loc = storageReference.child("Portofolio/$id")
         val uploadTask = loc.putFile(imageUri)
+        val timeNow = FieldValue.serverTimestamp()
 
         uploadTask.addOnSuccessListener { taskSnapshot ->
             taskSnapshot.storage.downloadUrl.addOnSuccessListener {
                 val data =
-                    DataPortofolio(id, currentUserId, it.toString(), title, kategori, deskripsi)
+                    DataPortofolio(
+                        id = id,
+                        idUser = currentUserId,
+                        image = it.toString(),
+                        judul = title,
+                        kategori = kategori,
+                        deskripsi = deskripsi,
+                        time = timeNow
+                    )
                 db.collection("portofolio").document(id)
                     .set(data)
                     .addOnSuccessListener { documentReference ->
                         navController.navigate(BottomBarScreen.Portofolio.route)
                     }
-
             }
         }
 

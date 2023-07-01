@@ -2,6 +2,8 @@ package com.example.seccraft_app.screens.forum
 
 
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.*
@@ -23,6 +25,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.example.seccraft_app.R
 import androidx.compose.ui.res.stringResource
@@ -31,8 +34,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.Collection.Forum.ForumCollection
@@ -40,6 +45,7 @@ import com.example.seccraft_app.Collection.Forum.ReplyForum
 import com.example.seccraft_app.Collection.User.DataUser
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.ui.theme.*
+import com.google.firebase.firestore.Query
 import com.jet.firestore.JetFirestore
 import com.jet.firestore.getListOfObjects
 
@@ -98,11 +104,89 @@ fun ForumScreen(navController: NavHostController) {
                 .background(bg)
                 .padding(it)
         ) {
-            TopForum()
-            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                SearchForum()
-                ItemForum(navController)
+
+            var search by remember { mutableStateOf("") }
+
+
+            Column {
+                TopForum()
+                Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+
+                    var listforum by remember { mutableStateOf(listOf<ForumCollection>()) }
+                    var filteredList by remember {
+                        mutableStateOf(listOf<ForumCollection>())
+                    }
+
+                    JetFirestore(
+                        path = { collection("Forum") },
+                        queryOnCollection = { orderBy("time", Query.Direction.DESCENDING) },
+                        onRealtimeCollectionFetch = { values, exception ->
+                            listforum = values.getListOfObjects()
+                        },
+                    ) {
+
+                        LazyColumn(
+                            contentPadding = PaddingValues(top = 48.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            if (search == "") {
+                                items(listforum) { forum ->
+                                    CardItemForum(forum, navController)
+                                }
+                            } else {
+                                filteredList = listforum.filter {
+                                    it.TextForum.contains(
+                                        search,
+                                        ignoreCase = true
+                                    )
+                                }
+                                items(filteredList) { forum ->
+                                    CardItemForum(forum, navController)
+                                }
+
+                            }
+
+                        }
+                    }
+
+                }
             }
+
+            TextField(
+                value = search,
+                placeholder = { Text(stringResource(id = R.string.cari)) },
+                onValueChange = {
+                    search = it
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 72.dp)
+                    .padding(horizontal = 32.dp)
+                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp)),
+                textStyle = MaterialTheme.typography.labelMedium,
+                trailingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.search),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .size(24.dp)
+                    )
+                },
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = Color.Black,
+                    placeholderColor = icon_faded,
+                    cursorColor = Color.Black,
+                    containerColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                )
+
+            )
+
         }
     }
 
@@ -122,17 +206,12 @@ fun MultiFloatingButton(
         if (it == MultiFloatingState.Expanded) 315f else 0f
     }
 
-    val fabScale by transition.animateFloat(label = "FabScale") {
-        if (it == MultiFloatingState.Expanded) 36f else 0f
-    }
-
     val alpha by transition.animateFloat(
         label = "alpha",
         transitionSpec = { tween(durationMillis = 50) }) {
         if (it == MultiFloatingState.Expanded) 1f else 0f
     }
 
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     Column(
         horizontalAlignment = Alignment.End,
@@ -227,32 +306,31 @@ fun MinFab(
         }
     }
 
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemForum(navController: NavHostController) {
-    var listforum by remember { mutableStateOf(listOf<ForumCollection>()) }
-    JetFirestore(
-        path = { collection("Forum") },
-        onRealtimeCollectionFetch = { values, exception ->
-            listforum = values.getListOfObjects()
-        },
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 16.dp)
+fun ShowImage(
+    image: String,
+    setShowDialog: (Boolean) -> Unit
+) {
+    Dialog(onDismissRequest = { setShowDialog(false) }) {
+        Box(
+            contentAlignment = Alignment.Center,
         ) {
-
-            items(listforum) { forum ->
-                CardItemForum(forum, navController)
+            Card(modifier = Modifier.size(350.dp)) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = image),
+                    contentDescription = "",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
+                )
             }
         }
     }
 
-
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -260,6 +338,16 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
 
     var user by remember { mutableStateOf(DataUser()) }
     var replyForum by remember { mutableStateOf(listOf<ReplyForum>()) }
+    var showReply by remember { mutableStateOf(false) }
+    var countReply by remember { mutableStateOf(0) }
+    val showDialog = remember { mutableStateOf(false) }
+    val showReplyDialog = remember { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        ShowImage(image = item.image) {
+            showDialog.value = it
+        }
+    }
 
     JetFirestore(
         path = { document("users/${item.idUser}") },
@@ -274,13 +362,20 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
     ) {
         JetFirestore(
             path = { collection("Forum/${item.id}/ReplyForum") },
+            queryOnCollection = { orderBy("time", Query.Direction.ASCENDING) },
             onRealtimeCollectionFetch = { values, exception ->
                 replyForum = values.getListOfObjects()
             },
         ) {
+
+            countReply = replyForum.count()
+
             Card(
                 colors = CardDefaults.cardColors(Color.White),
-                shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+                shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
+                modifier = Modifier.clickable {
+                    navController.navigate("forum_detail_screen/${item.id}")
+                }
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     ConstraintLayout(
@@ -323,7 +418,7 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                     )
                                 }
                             }
-                            if (replyForum.isNotEmpty()) {
+                            if (replyForum.isNotEmpty() && showReply) {
                                 Divider(
                                     color = black4d,
                                     modifier = Modifier
@@ -365,7 +460,8 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(250.dp),
+                                        .padding(top = 2.dp)
+                                        .height(160.dp),
                                     colors = CardDefaults.cardColors(
                                         gray_DA
                                     )
@@ -374,35 +470,78 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                         painter = rememberAsyncImagePainter(model = item.image),
                                         contentDescription = "",
                                         contentScale = ContentScale.FillBounds,
-                                        modifier = Modifier.fillMaxSize()
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clickable {
+                                                showDialog.value = true
+
+                                            }
                                     )
                                 }
                             }
                             Row(modifier = Modifier.padding(vertical = 16.dp)) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.chat),
-                                    contentDescription = "",
-                                    modifier = Modifier.clickable {
-                                        navController.navigate("forum_reply_screen/${item.id}")
-                                    }
-                                )
-                                Text(
-                                    text = stringResource(id = R.string.balas),
-                                    fontFamily = PoppinsFamily,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    color = gray_25,
-                                    style = LocalTextStyle.current.copy(
-                                        platformStyle = PlatformTextStyle(includeFontPadding = false)
-                                    ),
-                                    modifier = Modifier.padding(start = 4.dp)
-                                )
+
+                                Row(modifier = Modifier.clickable { navController.navigate("forum_reply_screen/${item.id}/null") }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.chat),
+                                        contentDescription = "",
+                                    )
+                                }
+
+                                if (!showReply && countReply != 0) {
+                                    Text(
+                                        text = countReply.toString(),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = Color.Black,
+                                        modifier = Modifier.padding(start = 4.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.lihat_balas),
+                                        fontFamily = PoppinsFamily,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = gray_25,
+                                        style = LocalTextStyle.current.copy(
+                                            platformStyle = PlatformTextStyle(includeFontPadding = false)
+                                        ),
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .clickable {
+                                                showReply = true
+                                            }
+                                    )
+                                } else {
+                                    Text(
+                                        text = stringResource(id = R.string.balas),
+                                        fontFamily = PoppinsFamily,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = gray_25,
+                                        style = LocalTextStyle.current.copy(
+                                            platformStyle = PlatformTextStyle(includeFontPadding = false)
+                                        ),
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .clickable {
+                                                navController.navigate("forum_reply_screen/${item.id}/null")
+                                            }
+                                    )
+                                }
+
                             }
                         }
                     }
 
-                    if (replyForum.isNotEmpty()) {
+                    if (replyForum.isNotEmpty() && showReply) {
+
                         replyForum.forEachIndexed { idx, reply ->
+
+                            if (showReplyDialog.value) {
+                                ShowImage(image = reply.image) {
+                                    showReplyDialog.value = it
+                                }
+                            }
+
                             Column(modifier = Modifier.fillMaxSize()) {
                                 ConstraintLayout(
                                     modifier = Modifier
@@ -466,8 +605,6 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                             }
                                         }
 
-
-
                                         Column(
                                             modifier = Modifier
                                                 .padding(start = 16.dp)
@@ -503,6 +640,72 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                                 ),
                                             )
 
+                                            if (reply.image != "") {
+                                                Card(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 2.dp)
+                                                        .height(160.dp),
+                                                    colors = CardDefaults.cardColors(
+                                                        gray_DA
+                                                    )
+                                                ) {
+                                                    Image(
+                                                        painter = rememberAsyncImagePainter(model = reply.image),
+                                                        contentDescription = "",
+                                                        contentScale = ContentScale.FillBounds,
+                                                        modifier = Modifier
+                                                            .fillMaxSize()
+                                                            .clickable {
+                                                                showReplyDialog.value = true
+
+                                                            }
+                                                    )
+                                                }
+                                            }
+
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier
+                                                    .padding(top = 8.dp)
+                                                    .clickable {
+                                                        navController.navigate("forum_reply_screen/${item.id}/${reply.id}")
+                                                    }
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.chat),
+                                                    contentDescription = "",
+                                                )
+
+                                                Text(
+                                                    text = stringResource(id = R.string.balas),
+                                                    fontFamily = PoppinsFamily,
+                                                    fontSize = 12.sp,
+                                                    fontWeight = FontWeight.Normal,
+                                                    color = gray_25,
+                                                    style = LocalTextStyle.current.copy(
+                                                        platformStyle = PlatformTextStyle(
+                                                            includeFontPadding = false
+                                                        )
+                                                    ),
+                                                    modifier = Modifier.padding(start = 8.dp)
+                                                )
+
+                                            }
+
+                                            if (idx == (replyForum.size - 1)) {
+                                                Text(
+                                                    text = stringResource(id = R.string.sembunyikan_balas),
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = Color.Black,
+                                                    modifier = Modifier
+                                                        .padding(top = 24.dp)
+                                                        .clickable {
+                                                            showReply = false
+                                                        }
+                                                )
+                                            }
+
                                         }
                                     }
                                 }
@@ -518,56 +721,6 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
 }
 
 @Composable
-fun SearchForum() {
-    Text(
-        text = stringResource(id = R.string.forum),
-        fontFamily = PoppinsFamily,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = Color.Black,
-        style = LocalTextStyle.current.copy(
-            platformStyle = PlatformTextStyle(includeFontPadding = false)
-        ),
-        modifier = Modifier.padding(top = 16.dp)
-    )
-    var search by remember { mutableStateOf("") }
-    TextField(
-        value = search,
-        placeholder = { Text(stringResource(id = R.string.cari)) },
-        onValueChange = {
-            search = it
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 26.dp)
-            .padding(horizontal = 12.dp)
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp)),
-        textStyle = MaterialTheme.typography.labelMedium,
-        trailingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.search),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(15.dp)
-                    .size(24.dp)
-            )
-        },
-        singleLine = true,
-        shape = RoundedCornerShape(16.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.Black,
-            placeholderColor = icon_faded,
-            cursorColor = Color.Black,
-            containerColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
-        )
-
-    )
-}
-
-@Composable
 fun TopForum() {
     Surface(
         color = primary,
@@ -576,6 +729,18 @@ fun TopForum() {
             .height(102.dp)
             .fillMaxWidth()
     ) {
+
+        Text(
+            text = stringResource(id = R.string.forum),
+            fontFamily = PoppinsFamily,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.Black,
+            style = LocalTextStyle.current.copy(
+                platformStyle = PlatformTextStyle(includeFontPadding = false)
+            ),
+            modifier = Modifier.padding(top = 16.dp, start = 20.dp)
+        )
 
     }
 }

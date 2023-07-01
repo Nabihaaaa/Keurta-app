@@ -1,6 +1,5 @@
 package com.example.seccraft_app.screens.portofolio
 
-
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -34,6 +33,7 @@ import com.example.seccraft_app.R
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.jet.firestore.JetFirestore
@@ -41,10 +41,7 @@ import com.jet.firestore.getListOfObjects
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PortofolioScreen(
-    navController: NavHostController,
-) {
-
+fun PortofolioScreen(navController: NavHostController) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -174,16 +171,27 @@ fun PortofolioScreen(
                 }
 
                 var dataPortofolio by remember { mutableStateOf(listOf<DataPortofolio>()) }
+                var sort by remember { mutableStateOf("") }
+                if (selected){
+                    sort = "time"
+                }else{
+                    sort = "like"
+
+                }
 
                 JetFirestore(
                     path = { collection("portofolio") },
-                    onRealtimeCollectionFetch = { values, exception ->
+                    queryOnCollection = {
+                        if(selected) orderBy("time", Query.Direction.DESCENDING) else orderBy("like", Query.Direction.DESCENDING)
+                    },
+                    onSingleTimeCollectionFetch = { values, exception ->
                         dataPortofolio = values.getListOfObjects()
                     },
                 ) {
                     //item Pola
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
+                        reverseLayout = false,
                         contentPadding = PaddingValues(top = 12.dp, start = 20.dp, end = 20.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -195,7 +203,7 @@ fun PortofolioScreen(
                             var user by remember { mutableStateOf(DataUser()) }
                             JetFirestore(
                                 path = { document("users/${portofolio.idUser}") },
-                                onRealtimeDocumentFetch = { value, exception ->
+                                onSingleTimeDocumentFetch = { value, exception ->
                                     val email = value!!.getString("email").toString()
                                     val name = value.getString("name").toString()
                                     val number = value.getString("number").toString()
@@ -225,7 +233,8 @@ fun PortofolioScreen(
                                     nameFull = user.name,
                                     imageUser = user.image,
                                     deskripsi = portofolio.deskripsi,
-                                    kategori = portofolio.kategori
+                                    kategori = portofolio.kategori,
+                                    navController = navController
                                 )
 
                             }
@@ -250,7 +259,8 @@ fun CardItem(
     deskripsi: String,
     kategori: String,
     titleFull: String,
-    nameFull: String
+    nameFull: String,
+    navController: NavHostController
 ) {
 
     var likeCount by remember { mutableStateOf(0) }
@@ -269,7 +279,8 @@ fun CardItem(
             imageUser,
             kategori,
             image,
-            id
+            id,
+            navController
         ) {
             showDialog.value = it
         }
@@ -292,11 +303,10 @@ fun CardItem(
                 .wrapContentHeight()
                 .combinedClickable(
                     onClick = {
-
+                        navController.navigate("portofolio_detail_screen/$id")
                     },
                     onLongClick = {
                         showDialog.value = true
-
                     }
                 ),
             elevation = CardDefaults.cardElevation(2.dp),
@@ -366,9 +376,9 @@ fun CardItem(
                                     .size(24.dp)
                                     .clickable {
                                         if (likeData.like) {
-                                            LikePto(id, false)
+                                            LikePto(id, false, likeCount)
                                         } else {
-                                            LikePto(id, true)
+                                            LikePto(id, true, likeCount)
                                         }
                                     }
                             )
@@ -402,14 +412,12 @@ fun CardItemDetail(
     kategori: String,
     image: String,
     id: String,
+    navController: NavHostController,
     setShowDialog: (Boolean) -> Unit
 ) {
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
         ) {
             Card(
                 colors = CardDefaults.cardColors(primary),
@@ -449,9 +457,9 @@ fun CardItemDetail(
                                     .padding(bottom = 2.dp)
                                     .clickable {
                                         if (like) {
-                                            LikePto(id, false)
+                                            LikePto(id, false, likeCount)
                                         } else {
-                                            LikePto(id, true)
+                                            LikePto(id, true, likeCount)
                                         }
 
                                     }
@@ -521,8 +529,10 @@ fun CardItemDetail(
                         modifier = Modifier
                             .padding(top = 18.dp)
                             .fillMaxWidth()
+                            .clickable {
+                                navController.navigate("portofolio_detail_screen/$id")
+                            }
                     )
-
 
                 }
             }
@@ -531,15 +541,16 @@ fun CardItemDetail(
 
 }
 
-fun LikePto(id: String, like: Boolean) {
+fun LikePto(id: String, like: Boolean, likeCount: Int) {
     val auth = Firebase.auth
     val db = Firebase.firestore
     val idCurrentUser = auth.currentUser!!.uid
 
     val data = LikePortofolio(idUser = idCurrentUser, like = like)
 
-    db.collection("portofolio/$id/like/").document(idCurrentUser).set(data)
+    db.document("portofolio/$id").update("like", likeCount)
 
+    db.collection("portofolio/$id/like/").document(idCurrentUser).set(data)
 
 }
 

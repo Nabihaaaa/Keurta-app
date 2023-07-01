@@ -1,7 +1,6 @@
 package com.example.seccraft_app.screens.forum
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -29,9 +28,11 @@ import com.example.seccraft_app.ui.theme.bg
 import com.example.seccraft_app.ui.theme.icon_faded
 import com.example.seccraft_app.ui.theme.secondary
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import java.time.LocalDateTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -153,8 +154,10 @@ fun uploadImage(text: String, navController: NavHostController, imageUri: Uri?) 
     val auth = Firebase.auth
     val currentUser = auth.currentUser
 
+    val timeNow = FieldValue.serverTimestamp()
+
     val id = db.collection("Forum").document().id
-    var dataForum = ForumCollection(id = id,idUser = currentUser!!.uid, TextForum = text)
+    var dataForum = ForumCollection(id = id, idUser = currentUser!!.uid, TextForum = text, time = timeNow)
 
     val storageReference = FirebaseStorage.getInstance().reference
     val loc = storageReference.child("Forum/$id/ForumImage")

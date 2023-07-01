@@ -6,5 +6,7 @@ data class DataPortofolio(
     val image : String = "",
     val judul : String = "",
     val kategori : String = "",
-    val deskripsi : String = ""
+    val deskripsi : String = "",
+    val like : Int = 0,
+    val time : Any? = null
 )

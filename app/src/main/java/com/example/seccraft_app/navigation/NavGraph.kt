@@ -11,11 +11,9 @@ import com.example.seccraft_app.screens.portofolio.PortofolioScreen
 import com.example.seccraft_app.screens.SplashScreen
 import com.example.seccraft_app.screens.auth.LoginScreen
 import com.example.seccraft_app.screens.auth.RegisterScreen
-import com.example.seccraft_app.screens.forum.ForumScreen
-import com.example.seccraft_app.screens.forum.ImageForumScreen
-import com.example.seccraft_app.screens.forum.ReplyScreen
-import com.example.seccraft_app.screens.forum.TextScreen
+import com.example.seccraft_app.screens.forum.*
 import com.example.seccraft_app.screens.portofolio.AddPortofolioScreen
+import com.example.seccraft_app.screens.portofolio.DetailPortofolioScreen
 import com.example.seccraft_app.screens.profile.EditProfileScreen
 import com.example.seccraft_app.screens.profile.MyKursus
 import com.example.seccraft_app.screens.profile.PointScreen
@@ -69,10 +67,16 @@ fun MainNavGraph(
             ImageForumScreen(navController)
         }
         composable(Screens.ReplyForum.route){
-            ReplyScreen(navController = navController, it.arguments?.getString("documentId")!!)
+            ReplyScreen(navController = navController, it.arguments?.getString("documentId")!!, it.arguments?.getString("replyId")!!)
         }
         composable(Screens.AddPortofolio.route){
             AddPortofolioScreen(navController)
+        }
+        composable(Screens.DetailPortofolio.route){
+            DetailPortofolioScreen(navcontroller = navController, it.arguments?.getString("documentId")!!)
+        }
+        composable(Screens.DetailForum.route){
+            DetailForumScreen(navController = navController, it.arguments?.getString("documentId")!!)
         }
     }
 

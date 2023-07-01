@@ -1,6 +1,5 @@
 package com.example.seccraft_app.screens.forum
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +25,7 @@ import com.example.seccraft_app.ui.theme.bg
 import com.example.seccraft_app.ui.theme.icon_faded
 import com.example.seccraft_app.ui.theme.secondary
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -38,7 +38,7 @@ fun TextScreen(navController: NavHostController) {
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(id = R.string.text),
+                text = stringResource(id = R.string.topik_baru),
                 fontFamily = PoppinsFamily,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -101,9 +101,10 @@ private fun uploadText(text: String, navController: NavHostController) {
     val db = Firebase.firestore
     val auth = Firebase.auth
     val currentUser = auth.currentUser
+    val timeNow = FieldValue.serverTimestamp()
 
     val id = db.collection("Forum").document().id
-    val data = ForumCollection(id = id,idUser = currentUser!!.uid, TextForum = text)
+    val data = ForumCollection(id = id, idUser = currentUser!!.uid, TextForum = text, time = timeNow)
 
     db.collection("Forum").document(id)
         .set(data)

@@ -64,11 +64,21 @@
     <string name="forum">Forum</string>
     <string name="cari">Cari</string>
     <string name="balas">Balas</string>
-    <string name="text">Tuliskan yang ingin di upload pada forum</string>
-    <string name="Edittext">Tuliskan sesuatu …</string>
+    <string name="lihat_balas">Lihat Balasan</string>
+    <string name="sembunyikan_balas">Sembunyikan Balasan</string>
+    <string name="post">Post</string>
+    <string name="topik_baru">Buat Topik Baru</string>
+    <string name="Edittext">Tuliskan Topik …</string>
     <string name="upload_ke_forum">Upload ke forum</string>
     <string name="textKomentar">Berikan komentar pada gambar</string>
-    <string name="komentar_forum">Berikan balasan pada forum</string>
+    <string name="komentar_forum">komentar …</string>
+    <string name="membalas">Membalas</string>
+    <!-- Aktivitas Screen String-->
+    <string name="riwayat">Riwayat</string>
+    <string name="suka">Suka</string>
+    <string name="kelas">Kelas</string>
+    <string name="pesanan">Pesanan</string>
+    <string name="buka">Buka</string>
 
 
 

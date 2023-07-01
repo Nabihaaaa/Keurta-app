@@ -9,6 +9,8 @@ sealed class Screens(val route: String){
     object EditProfile : Screens("editprofile_screen")
     object TextForum : Screens("forum_text_screen")
     object ImageForum : Screens("forum_image_screen")
-    object ReplyForum : Screens("forum_reply_screen/{documentId}")
+    object ReplyForum : Screens("forum_reply_screen/{documentId}/{replyId}")
     object AddPortofolio : Screens("portofolio_add_screen")
+    object DetailPortofolio : Screens("portofolio_detail_screen/{documentId}")
+    object DetailForum : Screens("forum_detail_screen/{documentId}")
 }
