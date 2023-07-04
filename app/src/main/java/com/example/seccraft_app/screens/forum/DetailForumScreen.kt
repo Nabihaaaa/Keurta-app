@@ -31,6 +31,7 @@ import com.example.seccraft_app.Collection.Forum.ReplyForum
 import com.example.seccraft_app.Collection.User.DataUser
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
+import com.google.firebase.firestore.Query
 import com.jet.firestore.JetFirestore
 import com.jet.firestore.getListOfObjects
 
@@ -91,6 +92,7 @@ fun DetailForumScreen(navController: NavHostController, forumId: String) {
         ) {
             JetFirestore(
                 path = { collection("Forum/$forumId/ReplyForum") },
+                queryOnCollection = { orderBy("time", Query.Direction.ASCENDING) },
                 onRealtimeCollectionFetch = { values, exception ->
                     replyForum = values.getListOfObjects()
                 },
@@ -101,9 +103,7 @@ fun DetailForumScreen(navController: NavHostController, forumId: String) {
 
                 } else {
                     ForumDisplay(forumData, navController)
-
                 }
-
 
             }
 

@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -20,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -29,6 +31,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.Collection.User.DataUser
 import com.example.seccraft_app.Collection.portofolio.DataPortofolio
 import com.example.seccraft_app.Collection.portofolio.LikePortofolio
+import com.example.seccraft_app.Collection.portofolio.UserLikePortofolio
 import com.example.seccraft_app.R
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.ui.theme.*
@@ -37,11 +40,26 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.jet.firestore.JetFirestore
+import com.jet.firestore.Pagination
 import com.jet.firestore.getListOfObjects
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PortofolioScreen(navController: NavHostController) {
+
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+    var dataPortofolio by remember { mutableStateOf(listOf<DataPortofolio>()) }
+    var dataPortofolioTime by remember { mutableStateOf(listOf<DataPortofolio>()) }
+    var searchText by remember { mutableStateOf("") }
+
+    val buttonSelected = remember {
+        derivedStateOf {
+            pagerState.currentPage == 0
+        }
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -88,13 +106,12 @@ fun PortofolioScreen(navController: NavHostController) {
                     modifier = Modifier.padding(bottom = 28.dp, start = 20.dp)
                 )
 
-                var kategoriText by remember { mutableStateOf("") }
                 TextField(
-                    value = kategoriText,
-                    readOnly = true,
-                    placeholder = { Text(stringResource(id = R.string.kategori)) },
+                    value = searchText,
+                    readOnly = false,
+                    placeholder = { Text(stringResource(id = R.string.cari)) },
                     onValueChange = {
-                        kategoriText = it
+                        searchText = it
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -103,7 +120,7 @@ fun PortofolioScreen(navController: NavHostController) {
                     textStyle = MaterialTheme.typography.labelMedium,
                     trailingIcon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.arrow_down),
+                            painter = painterResource(id = R.drawable.search),
                             contentDescription = "",
                             modifier = Modifier
                                 .padding(15.dp)
@@ -126,17 +143,14 @@ fun PortofolioScreen(navController: NavHostController) {
 
                 // Terkini dan populer
 
-                var selected by remember {
-                    mutableStateOf(true)
-                }
-
                 Row(modifier = Modifier.padding(start = 20.dp, top = 28.dp)) {
                     Card(
                         modifier = Modifier
                             .clickable {
-                                selected = true
+                                val prevPageIndex = pagerState.currentPage - 1
+                                coroutineScope.launch { pagerState.animateScrollToPage(prevPageIndex) }
                             },
-                        colors = if (selected) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
+                        colors = if (buttonSelected.value) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
                             Color.White
                         ),
                         elevation = CardDefaults.cardElevation(4.dp)
@@ -144,7 +158,7 @@ fun PortofolioScreen(navController: NavHostController) {
                         Text(
                             text = stringResource(id = R.string.terkini),
                             style = MaterialTheme.typography.labelMedium,
-                            color = if (selected) Color.White else secondary,
+                            color = if (buttonSelected.value) Color.White else secondary,
                             modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
                         )
                     }
@@ -153,16 +167,17 @@ fun PortofolioScreen(navController: NavHostController) {
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .clickable {
-                                selected = false
+                                val nextPageIndex = pagerState.currentPage + 1
+                                coroutineScope.launch { pagerState.animateScrollToPage(nextPageIndex) }
                             },
-                        colors = if (!selected) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
+                        colors = if (!buttonSelected.value) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
                             Color.White
                         ),
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.populer),
-                            color = if (!selected) Color.White else secondary,
+                            color = if (!buttonSelected.value) Color.White else secondary,
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
                         )
@@ -170,80 +185,120 @@ fun PortofolioScreen(navController: NavHostController) {
 
                 }
 
-                var dataPortofolio by remember { mutableStateOf(listOf<DataPortofolio>()) }
-                var sort by remember { mutableStateOf("") }
-                if (selected){
-                    sort = "time"
-                }else{
-                    sort = "like"
-
-                }
-
                 JetFirestore(
                     path = { collection("portofolio") },
-                    queryOnCollection = {
-                        if(selected) orderBy("time", Query.Direction.DESCENDING) else orderBy("like", Query.Direction.DESCENDING)
-                    },
+                    queryOnCollection = { orderBy("time", Query.Direction.DESCENDING) },
                     onSingleTimeCollectionFetch = { values, exception ->
-                        dataPortofolio = values.getListOfObjects()
+                        dataPortofolioTime = values.getListOfObjects()
                     },
-                ) {
-                    //item Pola
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        reverseLayout = false,
-                        contentPadding = PaddingValues(top = 12.dp, start = 20.dp, end = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 12.dp)
-                    ) {
-                        items(dataPortofolio) { portofolio ->
-                            var user by remember { mutableStateOf(DataUser()) }
-                            JetFirestore(
-                                path = { document("users/${portofolio.idUser}") },
-                                onSingleTimeDocumentFetch = { value, exception ->
-                                    val email = value!!.getString("email").toString()
-                                    val name = value.getString("name").toString()
-                                    val number = value.getString("number").toString()
-                                    val image = value.getString("image").toString()
+                ) { pagination ->
 
-                                    user = user.copy(image, name, email, number)
-                                }
-                            ) {
+                    dataPortofolio = dataPortofolioTime.sortedByDescending { it.like }
 
-                                val name = user.name.substringBefore(' ')
-
-                                val title = if (portofolio.judul.length < 8) {
-                                    portofolio.judul.substring(0, portofolio.judul.length)
-                                } else {
-                                    portofolio.judul.substring(0, 8) + "..."
-                                }
-
-                                Log.d("itung String", "PortofolioScreen: ${title}")
-
-                                CardItem(
-                                    id = portofolio.id,
-                                    idUser = portofolio.idUser,
-                                    image = portofolio.image,
-                                    title = title,
-                                    name = name,
-                                    titleFull = portofolio.judul,
-                                    nameFull = user.name,
-                                    imageUser = user.image,
-                                    deskripsi = portofolio.deskripsi,
-                                    kategori = portofolio.kategori,
-                                    navController = navController
-                                )
-
-                            }
+                    HorizontalPager(pageCount = 2, state = pagerState) { pageIndex ->
+                        //item Pola
+                        if (pageIndex == 0) {
+                            GridItem(dataPortofolioTime, navController, pagination, searchText)
                         }
+                        if (pageIndex == 1) {
+                            GridItem(dataPortofolio, navController, pagination, searchText)
+                        }
+
                     }
                 }
 
             }
         }
+    }
+}
+
+@Composable
+fun GridItem(
+    dataPortofolio: List<DataPortofolio>,
+    navController: NavHostController,
+    pagination: Pagination,
+    searchText: String
+) {
+    val lazyListState = rememberLazyGridState()
+    val isScrolledToBottom = !lazyListState.canScrollForward
+
+    var filteredList by remember {
+        mutableStateOf(listOf<DataPortofolio>())
+    }
+
+    if (searchText != "") {
+        filteredList = dataPortofolio.filter {
+
+            it.judul.contains(
+                searchText,
+                ignoreCase = true
+            )||
+            it.kategori!!.any { kategori ->
+                kategori.toString().contains(
+                    searchText,
+                    ignoreCase = true
+                )
+            }
+        }
+
+    }
+
+    LaunchedEffect(isScrolledToBottom) {
+        if (isScrolledToBottom) pagination.loadNextPage()
+        Log.d("Apakah scroll bawah?", "GridItem: $isScrolledToBottom")
+    }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        state = lazyListState,
+        reverseLayout = false,
+        contentPadding = PaddingValues(top = 12.dp, start = 20.dp, end = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 12.dp)
+    ) {
+
+        items(if (searchText != "") filteredList else dataPortofolio) { portofolio ->
+            var user by remember { mutableStateOf(DataUser()) }
+            JetFirestore(
+                path = { document("users/${portofolio.idUser}") },
+                onSingleTimeDocumentFetch = { value, exception ->
+                    val email = value!!.getString("email").toString()
+                    val name = value.getString("name").toString()
+                    val number = value.getString("number").toString()
+                    val image = value.getString("image").toString()
+
+                    user = user.copy(image, name, email, number)
+                }
+            ) {
+
+                val name = user.name.substringBefore(' ')
+
+                val title = if (portofolio.judul.length < 8) {
+                    portofolio.judul.substring(0, portofolio.judul.length)
+                } else {
+                    portofolio.judul.substring(0, 8) + "..."
+                }
+
+                CardItem(
+                    id = portofolio.id,
+                    idUser = portofolio.idUser,
+                    image = portofolio.image,
+                    title = title,
+                    name = name,
+                    titleFull = portofolio.judul,
+                    nameFull = user.name,
+                    imageUser = user.image,
+                    deskripsi = portofolio.deskripsi,
+                    kategori = portofolio.kategori,
+                    navController = navController
+                )
+
+            }
+        }
+
     }
 }
 
@@ -257,7 +312,7 @@ fun CardItem(
     id: String,
     imageUser: String,
     deskripsi: String,
-    kategori: String,
+    kategori: List<Any?>?,
     titleFull: String,
     nameFull: String,
     navController: NavHostController
@@ -363,7 +418,6 @@ fun CardItem(
                                 false
                             ) else likeData.copy(idUserLike, like)
 
-                            Log.d("Isi Like", "CardItem: $like")
                         }
                     ) {
 
@@ -409,7 +463,7 @@ fun CardItemDetail(
     deskripsi: String,
     name: String,
     imageUser: String,
-    kategori: String,
+    kategori: List<Any?>?,
     image: String,
     id: String,
     navController: NavHostController,
@@ -430,7 +484,7 @@ fun CardItemDetail(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(250.dp)
+                            .height(300.dp)
                     ) {
                         Image(
                             painter = rememberAsyncImagePainter(model = image),
@@ -489,11 +543,15 @@ fun CardItemDetail(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Card(modifier = Modifier.size(32.dp), shape = CircleShape) {
+
                             Image(
-                                painter = rememberAsyncImagePainter(model = imageUser),
+                                painter = if (imageUser != "") rememberAsyncImagePainter(model = imageUser) else
+                                    painterResource(id = R.drawable.user_profile),
                                 contentDescription = "",
                                 modifier = Modifier.fillMaxSize()
                             )
+
+
                         }
 
                         Text(
@@ -503,20 +561,34 @@ fun CardItemDetail(
                         )
                     }
 
-                    if (kategori != "") {
-                        Card(
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.padding(top = 24.dp),
-                            colors = CardDefaults.cardColors(
-                                secondary
-                            )
-                        ) {
-                            Text(
-                                text = kategori,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Color.White,
-                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                            )
+                    if (kategori!!.isNotEmpty()) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            kategori.forEachIndexed { index, kategori ->
+                                if (kategori.toString() != ""){
+                                    Card(
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier.padding(
+                                            top = 24.dp,
+                                            start = if (index == 0) 0.dp else 12.dp
+                                        ),
+                                        colors = CardDefaults.cardColors(
+                                            secondary
+                                        )
+                                    ) {
+                                        Text(
+                                            text = kategori.toString(),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = Color.White,
+                                            modifier = Modifier.padding(
+                                                vertical = 8.dp,
+                                                horizontal = 16.dp
+                                            )
+                                        )
+                                    }
+                                }
+
+                            }
+
                         }
                     }
 
@@ -548,9 +620,12 @@ fun LikePto(id: String, like: Boolean, likeCount: Int) {
 
     val data = LikePortofolio(idUser = idCurrentUser, like = like)
 
+    val dataUserPortofolio = UserLikePortofolio(idPortofolio = id, like = like)
+
     db.document("portofolio/$id").update("like", likeCount)
 
     db.collection("portofolio/$id/like/").document(idCurrentUser).set(data)
+    db.collection("users/$idCurrentUser/likePortofolio/").document(id).set(dataUserPortofolio)
 
 }
 

@@ -12,7 +12,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -29,8 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.example.seccraft_app.R
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -123,9 +124,18 @@ fun ForumScreen(navController: NavHostController) {
                         onRealtimeCollectionFetch = { values, exception ->
                             listforum = values.getListOfObjects()
                         },
-                    ) {
+                    ) { pagination ->
+
+                        val lazyListState = rememberLazyListState()
+                        val isScrolledToBottom = !lazyListState.canScrollForward
+
+                        LaunchedEffect(isScrolledToBottom) {
+                            if (isScrolledToBottom) pagination.loadNextPage()
+                            Log.d("Apakah scroll bawah?", "GridItem: $isScrolledToBottom")
+                        }
 
                         LazyColumn(
+                            state = lazyListState,
                             contentPadding = PaddingValues(top = 48.dp),
                             modifier = Modifier.fillMaxSize()
                         ) {
@@ -341,7 +351,7 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
     var showReply by remember { mutableStateOf(false) }
     var countReply by remember { mutableStateOf(0) }
     val showDialog = remember { mutableStateOf(false) }
-    val showReplyDialog = remember { mutableStateOf(false) }
+
 
     if (showDialog.value) {
         ShowImage(image = item.image) {
@@ -351,7 +361,7 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
 
     JetFirestore(
         path = { document("users/${item.idUser}") },
-        onRealtimeDocumentFetch = { value, exception ->
+        onSingleTimeDocumentFetch = { value, exception ->
             val email = value!!.getString("email").toString()
             val name = value.getString("name").toString()
             val number = value.getString("number").toString()
@@ -363,7 +373,7 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
         JetFirestore(
             path = { collection("Forum/${item.id}/ReplyForum") },
             queryOnCollection = { orderBy("time", Query.Direction.ASCENDING) },
-            onRealtimeCollectionFetch = { values, exception ->
+            onSingleTimeCollectionFetch = { values, exception ->
                 replyForum = values.getListOfObjects()
             },
         ) {
@@ -536,6 +546,8 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
 
                         replyForum.forEachIndexed { idx, reply ->
 
+                            val showReplyDialog = remember { mutableStateOf(false) }
+
                             if (showReplyDialog.value) {
                                 ShowImage(image = reply.image) {
                                     showReplyDialog.value = it
@@ -628,16 +640,16 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                                 ),
                                             )
                                             Text(
-                                                text = reply.TextReply,
-                                                fontFamily = PoppinsFamily,
-                                                fontSize = 14.sp,
-                                                fontWeight = FontWeight.Normal,
-                                                color = Color.Black,
-                                                style = LocalTextStyle.current.copy(
-                                                    platformStyle = PlatformTextStyle(
-                                                        includeFontPadding = false
-                                                    )
-                                                ),
+                                                buildAnnotatedString {
+
+                                                    withStyle(style = SpanStyle(color = Color.Blue)) {
+                                                        append(reply.TextReply.substringBefore('\n'))
+                                                    }
+
+                                                    append('\n'+reply.TextReply.substringAfter('\n'))
+                                                },
+                                                style = MaterialTheme.typography.labelMedium
+
                                             )
 
                                             if (reply.image != "") {
@@ -658,7 +670,6 @@ fun CardItemForum(item: ForumCollection, navController: NavHostController) {
                                                             .fillMaxSize()
                                                             .clickable {
                                                                 showReplyDialog.value = true
-
                                                             }
                                                     )
                                                 }

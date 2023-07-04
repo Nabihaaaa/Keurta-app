@@ -13,4 +13,6 @@ sealed class Screens(val route: String){
     object AddPortofolio : Screens("portofolio_add_screen")
     object DetailPortofolio : Screens("portofolio_detail_screen/{documentId}")
     object DetailForum : Screens("forum_detail_screen/{documentId}")
+    object Artikel : Screens("artikel_screen")
+    object DetailArtikel : Screens("artikel_detail_screen/{documentId}")
 }

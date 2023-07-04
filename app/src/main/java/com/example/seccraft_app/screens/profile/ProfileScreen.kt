@@ -40,7 +40,7 @@ fun ProfileScreen(
     dataProfileModel: DataProfileModel = viewModel()
 ) {
     val getData = dataProfileModel.state.value
-    Log.d("ISI GET DATA", "ProfileScreen: $getData")
+
     Accompanist().TopBar(color = primary)
     Surface(
         color = bg

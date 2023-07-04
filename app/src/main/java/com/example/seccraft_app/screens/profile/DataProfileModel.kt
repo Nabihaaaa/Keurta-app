@@ -10,18 +10,59 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 
 class DataProfileModel: ViewModel(){
     val state = mutableStateOf(DataUser())
+
     init {
         getData()
     }
-    private fun getData(){
+    private fun getData() {
         viewModelScope.launch {
-            state.value = getDataProfile()
+            fetchDataProfile().collect { dataUser ->
+                state.value = dataUser
+            }
         }
     }
+
+    private fun fetchDataProfile(): Flow<DataUser> = callbackFlow {
+        val auth = Firebase.auth
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.document("users/${auth.currentUser!!.uid}")
+
+        val listenerRegistration = userRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                // Tangani kesalahan jika terjadi
+                // ...
+
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val name = snapshot.getString("name")!!
+                val image = snapshot.getString("image")!!
+                val email = snapshot.getString("email")!!
+                val number = snapshot.getString("number")!!
+
+                val dataUser = DataUser(image, name, email, number)
+                trySend(dataUser).isSuccess
+            }
+        }
+
+        // Batalkan listener saat aliran ditutup
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }
+//    private fun getData(){
+//        viewModelScope.launch {
+//            state.value = getDataProfile()
+//        }
+//    }
 }
 
 suspend fun getDataProfile(): DataUser {

@@ -9,6 +9,7 @@ import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.screens.home.HomeScreen
 import com.example.seccraft_app.screens.portofolio.PortofolioScreen
 import com.example.seccraft_app.screens.SplashScreen
+import com.example.seccraft_app.screens.aktivitas.AktivitasScreen
 import com.example.seccraft_app.screens.auth.LoginScreen
 import com.example.seccraft_app.screens.auth.RegisterScreen
 import com.example.seccraft_app.screens.forum.*
@@ -43,7 +44,7 @@ fun MainNavGraph(
             ForumScreen(navController)
         }
         composable(route = BottomBarScreen.Aktivitas.route){
-
+            AktivitasScreen(navController)
         }
         composable(route = BottomBarScreen.Profil.route){
             ProfileScreen(navController)

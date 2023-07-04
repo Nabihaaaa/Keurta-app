@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.seccraft_app.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.Accompanist
@@ -52,12 +54,30 @@ fun AddPortofolioScreen(navController: NavHostController) {
                 colors = CardDefaults.cardColors(primary),
                 shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
             ) {
-                Text(
-                    text = stringResource(id = R.string.portofolio),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.Black,
-                    modifier = Modifier.padding(start = 20.dp, top = 28.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, top = 28.dp, bottom = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_left),
+                        contentDescription = "",
+                        tint = Color.Black,
+                        modifier = Modifier.clickable {
+                            navController.navigate(BottomBarScreen.Portofolio.route)
+                        }
+                    )
+
+                    Text(
+                        text = stringResource(id = R.string.portofolio),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.Black,
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
+
+                }
+
             }
             LazyColumn() {
                 item {
@@ -154,45 +174,6 @@ fun AddPortofolioScreen(navController: NavHostController) {
                             )
                         )
 
-                        TextField(
-                            value = kategori,
-                            placeholder = { Text(stringResource(id = R.string.kategori)) },
-                            onValueChange = {
-                                kategori = it
-                            },
-                            readOnly = true,
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.arrow_down),
-                                    contentDescription = "",
-                                    tint = Color(0xFFA19B9B)
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 14.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = Color(0xFFA19B9B),
-                                    shape = RoundedCornerShape(size = 6.dp)
-                                ),
-                            textStyle = TextStyle(
-                                fontFamily = PoppinsFamily,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                platformStyle = PlatformTextStyle(includeFontPadding = false)
-                            ),
-                            colors = TextFieldDefaults.textFieldColors(
-                                textColor = Color.Black,
-                                placeholderColor = icon_faded,
-                                cursorColor = Color.Black,
-                                containerColor = Color.White,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent
-                            )
-
-                        )
 
                         TextField(
                             value = deskripsi,
@@ -229,6 +210,133 @@ fun AddPortofolioScreen(navController: NavHostController) {
 
                         val context = LocalContext.current
 
+                        val listKategori = remember { mutableStateListOf("", "", "") }
+
+                        Row(modifier = Modifier.padding(top = 16.dp)) {
+
+                            listKategori.forEachIndexed { idx, str ->
+
+                                var textKategori by remember { mutableStateOf(str) }
+                                var showDialog = remember { mutableStateOf(false) }
+
+                                if (showDialog.value) {
+                                    Dialog(onDismissRequest = { showDialog.value = false }) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Column(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(24.dp)
+                                            ) {
+
+                                                TextField(
+                                                    value = textKategori,
+                                                    placeholder = { Text("Tambahkan Kategori") },
+                                                    onValueChange = {
+                                                        if (it.length <= 6) {
+                                                            textKategori = it
+                                                        }
+                                                    },
+
+                                                    shape = RoundedCornerShape(14.dp),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 14.dp)
+                                                        .border(
+                                                            width = 1.dp,
+                                                            color = Color(0xFFA19B9B),
+                                                            shape = RoundedCornerShape(size = 14.dp)
+                                                        ),
+                                                    textStyle = TextStyle(
+                                                        fontFamily = PoppinsFamily,
+                                                        fontSize = 14.sp,
+                                                        fontWeight = FontWeight.Medium,
+                                                        platformStyle = PlatformTextStyle(
+                                                            includeFontPadding = false
+                                                        )
+                                                    ),
+                                                    colors = TextFieldDefaults.textFieldColors(
+                                                        textColor = Color.Black,
+                                                        placeholderColor = icon_faded,
+                                                        cursorColor = Color.Black,
+                                                        containerColor = Color.White,
+                                                        focusedIndicatorColor = Color.Transparent,
+                                                        unfocusedIndicatorColor = Color.Transparent,
+                                                        disabledIndicatorColor = Color.Transparent
+                                                    )
+                                                )
+
+                                                Button(
+                                                    onClick = {
+                                                        listKategori[idx] = textKategori
+                                                        showDialog.value = false
+                                                    },
+                                                    modifier = Modifier.padding(top = 12.dp),
+                                                    contentPadding = PaddingValues(0.dp),
+                                                    colors = ButtonDefaults.buttonColors(secondary)
+                                                ) {
+                                                    Text(
+                                                        text = stringResource(id = R.string.submit),
+                                                        style = MaterialTheme.typography.bodyLarge,
+                                                        color = Color.White,
+                                                        modifier = Modifier.padding(
+                                                            horizontal = 20.dp,
+                                                            vertical = 6.dp
+                                                        )
+                                                    )
+                                                }
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                                if(idx == 0){
+                                    Card(
+                                        modifier = Modifier.clickable { showDialog.value = true },
+                                        colors = CardDefaults.cardColors(secondary)
+                                    ) {
+                                        Text(
+                                            text = if (str == "") "+ kategori" else str,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = Color.White,
+                                            modifier = Modifier.padding(
+                                                horizontal = 24.dp,
+                                                vertical = 8.dp
+                                            )
+                                        )
+
+                                    }
+                                }
+                                else{
+                                    if(listKategori[idx-1] != "") {
+                                        Card(
+                                            modifier = Modifier
+                                                .clickable {
+                                                    showDialog.value = true
+                                                }
+                                                .padding(start = 8.dp),
+                                            colors = CardDefaults.cardColors(secondary)
+                                        ) {
+                                            Text(
+                                                text = if (str == "") "+ kategori" else str,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = Color.White,
+                                                modifier = Modifier.padding(
+                                                    horizontal = 24.dp,
+                                                    vertical = 8.dp
+                                                )
+                                            )
+
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -240,13 +348,14 @@ fun AddPortofolioScreen(navController: NavHostController) {
                                     UploadPortofolio(
                                         imageUri,
                                         title,
-                                        kategori,
+                                        listKategori,
                                         deskripsi,
                                         navController,
                                         context
                                     )
                                 },
                                 shape = RoundedCornerShape(size = 6.dp),
+                                contentPadding = PaddingValues(0.dp),
                                 colors = ButtonDefaults.buttonColors(secondary)
                             ) {
                                 Text(
@@ -272,10 +381,11 @@ fun AddPortofolioScreen(navController: NavHostController) {
 
 }
 
+
 fun UploadPortofolio(
     imageUri: Uri?,
     title: String,
-    kategori: String,
+    kategori: SnapshotStateList<String>,
     deskripsi: String,
     navController: NavHostController,
     current: Context

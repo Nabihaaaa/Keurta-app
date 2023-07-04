@@ -41,21 +41,21 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
     Accompanist().TopBar(color = primary)
 
     var dataPortofolio by remember { mutableStateOf(DataPortofolio()) }
+
     var likeCount by remember { mutableStateOf(0) }
     var likeDataCollection by remember { mutableStateOf(listOf<LikePortofolio>()) }
     var likeData by remember { mutableStateOf(LikePortofolio()) }
     var user by remember { mutableStateOf(DataUser()) }
-    var test by remember { mutableStateOf(DataUser()) }
+
 
     JetFirestore(
         path = { document("portofolio/$documentId") },
         onRealtimeDocumentFetch = { value, ex ->
-            Log.d("dataPortofolio", "DetailPortofolioScreen: $value")
             val id = value!!.getString("id").toString()
             val idUser = value.getString("idUser").toString()
             val image = value.getString("image").toString()
             val judul = value.getString("judul").toString()
-            val kategori = value.getString("kategori").toString()
+            val a = value.get("kategori")
             val deskripsi = value.getString("deskripsi").toString()
 
             dataPortofolio = dataPortofolio.copy(
@@ -63,13 +63,18 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
                 idUser = idUser,
                 image = image,
                 judul = judul,
-                kategori = kategori,
+                kategori = a as List<Any?>?,
                 deskripsi = deskripsi,
             )
 
         }
 
     ) {
+
+        if (dataPortofolio.kategori != null) {
+            Log.d("Isi List Kategori", "DetailPortofolioScreen: ${dataPortofolio.kategori}")
+        }
+
 
         Surface(modifier = Modifier.fillMaxSize(), color = bg) {
             Column {
@@ -122,7 +127,7 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(300.dp), shape = RectangleShape
+                                .height(350.dp), shape = RectangleShape
                         ) {
                             Image(
                                 painter = rememberAsyncImagePainter(model = dataPortofolio.image),
@@ -173,9 +178,9 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
                                                 .padding(bottom = 2.dp)
                                                 .clickable {
                                                     if (likeData.like) {
-                                                        LikePto(dataPortofolio.id, false,likeCount)
+                                                        LikePto(dataPortofolio.id, false, likeCount)
                                                     } else {
-                                                        LikePto(dataPortofolio.id, true,likeCount)
+                                                        LikePto(dataPortofolio.id, true, likeCount)
                                                     }
 
                                                 }
@@ -197,7 +202,7 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
                                     .padding(top = 14.dp)
                             )
 
-                            if(dataPortofolio.idUser!=""){
+                            if (dataPortofolio.idUser != "") {
                                 JetFirestore(
                                     path = { document("users/${dataPortofolio.idUser}") },
                                     onRealtimeDocumentFetch = { value, exception ->
@@ -234,23 +239,39 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
                                 }
                             }
 
-                            if (dataPortofolio.kategori!=""){
-                                Card(
-                                    shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier.padding(top = 24.dp, bottom = 50.dp),
-                                    colors = CardDefaults.cardColors(
-                                        secondary
-                                    )
-                                ) {
-                                    Text(
-                                        text = dataPortofolio.kategori,
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = Color.White,
-                                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp)
-                                    )
-                                }
-                            }
 
+                            if (dataPortofolio.kategori != null && dataPortofolio.kategori!!.isNotEmpty()) {
+                                Row(modifier = Modifier.fillMaxWidth()) {
+
+                                    dataPortofolio.kategori!!.forEachIndexed { idx, kategori ->
+                                        if (kategori.toString() != "") {
+                                            Card(
+                                                shape = RoundedCornerShape(12.dp),
+                                                modifier = Modifier.padding(
+                                                    top = 24.dp,
+                                                    bottom = 50.dp,
+                                                    start = if (idx == 0) 0.dp else 12.dp
+                                                ),
+                                                colors = CardDefaults.cardColors(
+                                                    secondary
+                                                )
+                                            ) {
+                                                Text(
+                                                    text = kategori.toString(),
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = Color.White,
+                                                    modifier = Modifier.padding(
+                                                        vertical = 8.dp,
+                                                        horizontal = 24.dp
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                }
+
+                            }
 
 
                         }

@@ -67,6 +67,9 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
+    //viewpage
+    implementation 'androidx.compose.foundation:foundation:1.4.3'
+
     //coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 

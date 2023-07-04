@@ -1,26 +1,79 @@
 package com.example.seccraft_app.screens.aktivitas
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.Accompanist
-import com.example.seccraft_app.ui.theme.Poppins
+import com.example.seccraft_app.Collection.User.DataUser
+import com.example.seccraft_app.Collection.portofolio.DataPortofolio
 import com.example.seccraft_app.ui.theme.primary
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.bg
+import com.example.seccraft_app.ui.theme.secondary
+import com.jet.firestore.JetFirestore
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun AktivitasScreen() {
+fun AktivitasScreen(
+    navController: NavHostController,
+    dataAktivitasModel: DataAktivitasModel = viewModel()
+) {
+
+    val dataPortofolio = dataAktivitasModel.dataPortofolio
+
+    //Log.d("isidataportofolio", "AktivitasScreen: ${dataPortofolio.size}")
 
     Accompanist().TopBar(color = primary)
+
+    val pagerStateAktivitas = rememberPagerState()
+    val pagerStateRiwayat = rememberPagerState()
+    val pagerStateSuka = rememberPagerState()
+
+    val coroutineScope = rememberCoroutineScope()
+    val coroutineScopeRiwayat = rememberCoroutineScope()
+    val coroutineScopeSuka = rememberCoroutineScope()
+
+    val buttonSelectedAktivitas = remember {
+        derivedStateOf {
+            pagerStateAktivitas.currentPage == 0
+        }
+    }
+
+    val buttonSelectedRiwayat = remember {
+        derivedStateOf {
+            pagerStateRiwayat.currentPage == 0
+        }
+    }
+
+    val buttonSelectedSuka = remember {
+        derivedStateOf {
+            pagerStateSuka.currentPage == 0
+        }
+    }
 
     Surface(modifier = Modifier.fillMaxSize(), color = bg) {
         Box {
@@ -48,28 +101,202 @@ fun AktivitasScreen() {
                     elevation = CardDefaults.cardElevation(4.dp),
                     colors = CardDefaults.cardColors(Color.White)
                 ) {
-                    Column {
+                    Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 12.dp)) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 12.dp, start = 10.dp, bottom = 16.dp)
+                            modifier = Modifier.fillMaxWidth()
                         ) {
 
                             Text(
                                 text = stringResource(id = R.string.riwayat),
                                 style = MaterialTheme.typography.displayLarge,
-                                modifier = Modifier.padding(end = 18.dp)
+                                textDecoration = if (buttonSelectedAktivitas.value) TextDecoration.Underline else TextDecoration.None,
+                                modifier = Modifier
+                                    .padding(end = 18.dp)
+                                    .clickable {
+                                        val prevPageIndex = pagerStateAktivitas.currentPage - 1
+                                        coroutineScope.launch {
+                                            pagerStateAktivitas.animateScrollToPage(
+                                                prevPageIndex
+                                            )
+                                        }
+                                    }
+
                             )
+
                             Text(
                                 text = stringResource(id = R.string.suka),
                                 style = MaterialTheme.typography.displayLarge,
-                                modifier = Modifier.padding(end = 18.dp)
+                                textDecoration = if (!buttonSelectedAktivitas.value) TextDecoration.Underline else TextDecoration.None,
+                                modifier = Modifier
+                                    .padding(end = 18.dp)
+                                    .clickable {
+                                        val nextPageIndex = pagerStateAktivitas.currentPage + 1
+                                        coroutineScope.launch {
+                                            pagerStateAktivitas.animateScrollToPage(
+                                                nextPageIndex
+                                            )
+                                        }
+                                    }
                             )
 
                         }
 
+                        HorizontalPager(pageCount = 2, state = pagerStateAktivitas) {
+                            //Riwayat Button
+                            if (it == 0) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Card(
+                                        colors = if (buttonSelectedRiwayat.value) CardDefaults.cardColors(
+                                            secondary
+                                        ) else CardDefaults.cardColors(bg),
+                                        modifier = Modifier.clickable {
+                                            val prevPageIndex = pagerStateRiwayat.currentPage - 1
+                                            coroutineScopeRiwayat.launch {
+                                                pagerStateRiwayat.animateScrollToPage(
+                                                    prevPageIndex
+                                                )
+                                            }
+                                        }
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.kelas),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = if (buttonSelectedRiwayat.value) Color.White else Color.Black,
+                                            modifier = Modifier.padding(
+                                                horizontal = 28.dp,
+                                                vertical = 4.dp
+                                            )
+                                        )
+                                    }
+
+                                    Card(
+                                        colors = if (!buttonSelectedRiwayat.value) CardDefaults.cardColors(
+                                            secondary
+                                        ) else CardDefaults.cardColors(bg),
+                                        modifier = Modifier
+                                            .padding(start = 18.dp)
+                                            .clickable {
+                                                val nextPageIndex =
+                                                    pagerStateRiwayat.currentPage + 1
+
+                                                coroutineScopeRiwayat.launch {
+                                                    pagerStateRiwayat.animateScrollToPage(
+                                                        nextPageIndex
+                                                    )
+                                                }
+                                            }
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.pesanan),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = if (!buttonSelectedRiwayat.value) Color.White else Color.Black,
+                                            modifier = Modifier.padding(
+                                                horizontal = 28.dp,
+                                                vertical = 4.dp
+                                            )
+                                        )
+
+                                    }
+
+                                }
+                            }
+                            //Suka Button
+                            if (it == 1) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Card(
+                                        colors = if (buttonSelectedSuka.value) CardDefaults.cardColors(
+                                            secondary
+                                        ) else CardDefaults.cardColors(bg),
+                                        modifier = Modifier.clickable {
+                                            val prevPageIndex = pagerStateSuka.currentPage - 1
+                                            coroutineScopeSuka.launch {
+                                                pagerStateSuka.animateScrollToPage(
+                                                    prevPageIndex
+                                                )
+                                            }
+                                        }
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.artikel),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = if (buttonSelectedSuka.value) Color.White else Color.Black,
+                                            modifier = Modifier.padding(
+                                                horizontal = 28.dp,
+                                                vertical = 4.dp
+                                            )
+                                        )
+                                    }
+
+                                    Card(
+                                        colors = if (!buttonSelectedSuka.value) CardDefaults.cardColors(
+                                            secondary
+                                        ) else CardDefaults.cardColors(bg),
+                                        modifier = Modifier
+                                            .padding(start = 18.dp)
+                                            .clickable {
+                                                val nextPageIndex = pagerStateSuka.currentPage + 1
+                                                coroutineScopeSuka.launch {
+                                                    pagerStateSuka.animateScrollToPage(
+                                                        nextPageIndex
+                                                    )
+                                                }
+                                            }
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.portofolio),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = if (!buttonSelectedSuka.value) Color.White else Color.Black,
+                                            modifier = Modifier.padding(
+                                                horizontal = 28.dp,
+                                                vertical = 4.dp
+                                            )
+                                        )
+
+                                    }
+
+                                }
+                            }
+                        }
+
                     }
                 }
+
+                if (buttonSelectedAktivitas.value) {
+                    HorizontalPager(pageCount = 2, state = pagerStateRiwayat) {
+
+                        if (buttonSelectedRiwayat.value) {
+
+                        }
+                        if (!buttonSelectedRiwayat.value) {
+
+                        }
+
+                    }
+
+                }
+
+                if (!buttonSelectedAktivitas.value) {
+                    HorizontalPager(pageCount = 2, state = pagerStateSuka) {
+                        if (buttonSelectedSuka.value) {
+
+                        }
+                        if (!buttonSelectedSuka.value) {
+                            CardItemPortofolio(dataPortofolio, navController)
+                        }
+
+                    }
+                }
+
             }
 
         }
@@ -79,12 +306,125 @@ fun AktivitasScreen() {
 
 }
 
-@Composable
-@Preview
-fun AktivitasScreenPrv() {
 
-    MaterialTheme(typography = Poppins) {
-        AktivitasScreen()
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardItemPortofolio(
+    dataPortofolio: SnapshotStateList<DataPortofolio>,
+    navController: NavHostController
+) {
+
+    LazyColumn(
+        contentPadding = PaddingValues(top = 18.dp), modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Color.Transparent
+            )
+    ) {
+        items(dataPortofolio) { portofolio ->
+
+            var userPortofolio by remember { mutableStateOf(DataUser()) }
+
+            JetFirestore(
+                path = { document("users/${portofolio.idUser}") },
+                onSingleTimeDocumentFetch = { value, exception ->
+                    userPortofolio = userPortofolio.copy(
+                        image = value!!.getString("image").toString(),
+                        name = value.getString("name").toString()
+                    )
+
+                }
+            ) {
+
+            }
+
+            Card(
+                modifier = Modifier
+                    .height(130.dp)
+                    .padding(top = 12.dp)
+                    .fillMaxWidth()
+                    .clickable { navController.navigate("portofolio_detail_screen/${portofolio.id}") },
+                colors = CardDefaults.cardColors(Color.Transparent)
+            ) {
+                Row {
+
+                    Card(modifier = Modifier.size(130.dp), shape = RoundedCornerShape(7.dp)) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = portofolio.image),
+                            contentDescription = "",
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Column(modifier = Modifier.padding(start = 14.dp)) {
+                        Text(
+                            text = portofolio.judul,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
+
+                        Text(
+                            text = portofolio.deskripsi,
+                            style = MaterialTheme.typography.labelMedium,
+                            modifier = Modifier.fillMaxWidth(),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Card(modifier = Modifier.size(24.dp), shape = CircleShape) {
+                                if (userPortofolio.image!=""){
+                                    Image(
+                                        painter = rememberAsyncImagePainter(model = userPortofolio.image),
+                                        contentDescription = "",
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }else{
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.user_profile),
+                                        contentDescription = "",
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            }
+
+                            Text(
+                                text = userPortofolio.name,
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Icon(
+                                painter = painterResource(id = R.drawable.love),
+                                contentDescription = "",
+                                tint = Color.Red,
+                                modifier = Modifier.size(24.dp)
+                            )
+
+                            Text(
+                                text = portofolio.like.toString(),
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+
+
+                        }
+
+                    }
+
+                }
+            }
+
+        }
     }
 
 }
+

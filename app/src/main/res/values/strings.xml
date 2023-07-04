@@ -79,6 +79,8 @@
     <string name="kelas">Kelas</string>
     <string name="pesanan">Pesanan</string>
     <string name="buka">Buka</string>
+    <!-- Artikel Screen String-->
+    <string name="by_keurta">By KEURTA</string>
 
 
 
