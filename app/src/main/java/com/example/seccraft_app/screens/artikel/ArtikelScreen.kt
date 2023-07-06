@@ -4,9 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,14 +17,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.seccraft_app.Accompanist
-import com.example.seccraft_app.Collection.Artikel.DataArtikel
+import com.example.seccraft_app.screens.util.Accompanist
+import com.example.seccraft_app.BottomBarScreen
+import com.example.seccraft_app.collection.artikel.DataArtikel
 import com.example.seccraft_app.R
-import com.example.seccraft_app.ui.theme.Poppins
 import com.example.seccraft_app.ui.theme.bg
 import com.example.seccraft_app.ui.theme.icon_faded
 import com.example.seccraft_app.ui.theme.primary
@@ -35,7 +33,10 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
+fun ArtikelScreen(
+    dataArtikelModel: DataArtikelModel = viewModel(),
+    navController: NavHostController
+) {
     val lazyListState = rememberLazyListState()
     val isScrolledToBottom = !lazyListState.canScrollForward
 
@@ -66,9 +67,6 @@ fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
                     primary
                 )
             ) {
-
-
-
                 Row(
                     modifier = Modifier.padding(
                         top = 14.dp,
@@ -82,7 +80,9 @@ fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
                     Icon(
                         painter = painterResource(id = R.drawable.arrow_left),
                         contentDescription = "",
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable { navController.navigate(BottomBarScreen.Beranda.route) },
                         tint = icon_faded
                     )
 
@@ -132,10 +132,11 @@ fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Transparent),
-                contentPadding = PaddingValues(top = 36.dp)
+                contentPadding = PaddingValues(top = 36.dp),
+                state = LazyListState()
             ) {
 
-                items(if (search != "") filteredList else artikel) { dataArtikel ->
+                itemsIndexed(if (search != "") filteredList else artikel) { idx, dataArtikel ->
 
                     val timestamp = dataArtikel.time as com.google.firebase.Timestamp
 
@@ -165,7 +166,7 @@ fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-
+                                navController.navigate("artikel_detail_screen/${dataArtikel.id}")
                             }
                             .padding(top = 16.dp, start = 20.dp, end = 20.dp),
                         colors = CardDefaults.cardColors(Color.Transparent),
@@ -181,7 +182,8 @@ fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
 
                             Card(
                                 shape = RoundedCornerShape(16.dp),
-                                modifier = Modifier.size(142.dp)
+                                modifier = Modifier.size(142.dp),
+                                elevation = CardDefaults.cardElevation(8.dp)
                             ) {
                                 Image(
                                     painter = rememberAsyncImagePainter(model = dataArtikel.image),
@@ -216,10 +218,10 @@ fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
                                 ) {
 
                                     Text(
-                                        text = stringResource(id = R.string.by_keurta),
+                                        text = "By ${dataArtikel.pembuat}",
                                         style = MaterialTheme.typography.labelSmall,
 
-                                    )
+                                        )
                                     Spacer(modifier = Modifier.weight(1f))
                                     Icon(
                                         painter = painterResource(id = R.drawable.icon_eye),
@@ -239,11 +241,14 @@ fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
 
                         }
 
-                        Divider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 1.dp,
-                            color = Color(0x4D000000)
-                        )
+                        if (idx != artikel.size-1) {
+
+                            Divider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = 1.dp,
+                                color = Color(0x4D000000)
+                            )
+                        }
 
                     }
                 }
@@ -255,12 +260,5 @@ fun ArtikelScreen(dataArtikelModel: DataArtikelModel = viewModel()) {
     }
 }
 
-@Composable
-@Preview
-fun ArtikelScreenPrv() {
 
-    MaterialTheme(typography = Poppins) {
-        ArtikelScreen()
-    }
 
-}

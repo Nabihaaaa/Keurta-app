@@ -1,8 +1,4 @@
-package com.example.seccraft_app.Collection.Forum
-
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FieldValue
-import java.time.LocalDateTime
+package com.example.seccraft_app.collection.forum
 
 data class ForumCollection(
     var id: String ="",

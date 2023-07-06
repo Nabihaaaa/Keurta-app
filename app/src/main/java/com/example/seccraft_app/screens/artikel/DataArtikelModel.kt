@@ -1,15 +1,11 @@
 package com.example.seccraft_app.screens.artikel
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seccraft_app.Collection.Artikel.DataArtikel
-import com.example.seccraft_app.Collection.portofolio.DataPortofolio
-import com.example.seccraft_app.Collection.portofolio.UserLikePortofolio
-import com.google.firebase.auth.ktx.auth
+import com.example.seccraft_app.collection.artikel.DataArtikel
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -27,7 +23,7 @@ class DataArtikelModel : ViewModel(){
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val querySnapshot = firestore.collection("artikel").get().await()
+                val querySnapshot = firestore.collection("artikel").orderBy("time", Query.Direction.DESCENDING).get().await()
                 val data = querySnapshot.toObjects(DataArtikel::class.java)
                 dataArtikel.addAll(data)
 

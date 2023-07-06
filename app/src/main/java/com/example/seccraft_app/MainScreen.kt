@@ -1,20 +1,21 @@
 package com.example.seccraft_app
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.seccraft_app.ui.theme.Poppins
+import com.example.seccraft_app.ui.theme.secondary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +38,7 @@ fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Beranda,
         BottomBarScreen.Forum,
-        BottomBarScreen.Portofolio,
+        BottomBarScreen.Kursus,
         BottomBarScreen.Aktivitas,
         BottomBarScreen.Profil
     )
@@ -52,7 +53,7 @@ fun BottomBar(navController: NavHostController) {
 //    }
 
     AnimatedVisibility(visible = routes.any { it == currentDestination?.route }) {
-        NavigationBar(modifier = Modifier.fillMaxWidth()) {
+        NavigationBar(modifier = Modifier.fillMaxWidth(), containerColor = Color.White) {
             screens.forEach { screen ->
                 AddItem(
                     screen = screen,
@@ -84,5 +85,13 @@ fun RowScope.AddItem(
         icon = {
             Icon(painter = painterResource(id = screen.icon), contentDescription = "")
         },
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = Color.White,
+            selectedTextColor = Color(0xFF6A9C78),
+            indicatorColor = Color(0xFF6A9C78),
+            unselectedIconColor = Color.Black,
+            unselectedTextColor = Color.Black
+        )
     )
 }
+

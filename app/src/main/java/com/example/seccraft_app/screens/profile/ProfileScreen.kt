@@ -1,6 +1,5 @@
 package com.example.seccraft_app.screens.profile
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,15 +22,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.seccraft_app.Accompanist
-import com.example.seccraft_app.Collection.User.DataUser
+import com.example.seccraft_app.screens.util.Accompanist
+import com.example.seccraft_app.collection.User.DataUser
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.ktx.Firebase
-import com.jet.firestore.JetFirestore
 
 
 @Composable
@@ -372,7 +369,7 @@ fun Fiture(
                 modifier = Modifier
                     .weight(1f)
                     .clickable {
-                        navController.navigate(Screens.MyKursus.route)
+                        //navController.navigate(Screens.MyKursus.route)
                     }
             ) {
                 Image(painter = painterResource(id = R.drawable.sew), contentDescription = "")

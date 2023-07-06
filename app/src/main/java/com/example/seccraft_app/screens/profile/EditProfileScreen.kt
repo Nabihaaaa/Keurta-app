@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.seccraft_app.Accompanist
+import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.BottomBarScreen
-import com.example.seccraft_app.Collection.User.DataUser
+import com.example.seccraft_app.collection.User.DataUser
 import com.example.seccraft_app.ui.theme.PoppinsFamily
 import com.example.seccraft_app.ui.theme.bg
 import com.example.seccraft_app.ui.theme.gray_88

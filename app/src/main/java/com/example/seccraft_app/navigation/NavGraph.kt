@@ -10,13 +10,17 @@ import com.example.seccraft_app.screens.home.HomeScreen
 import com.example.seccraft_app.screens.portofolio.PortofolioScreen
 import com.example.seccraft_app.screens.SplashScreen
 import com.example.seccraft_app.screens.aktivitas.AktivitasScreen
+import com.example.seccraft_app.screens.artikel.ArtikelScreen
+import com.example.seccraft_app.screens.artikel.DetailArtikelScreen
 import com.example.seccraft_app.screens.auth.LoginScreen
 import com.example.seccraft_app.screens.auth.RegisterScreen
 import com.example.seccraft_app.screens.forum.*
+import com.example.seccraft_app.screens.kursus.DetailKursusScreen
+import com.example.seccraft_app.screens.kursus.KursusScreen
+import com.example.seccraft_app.screens.kursus.PembayaranScreen
 import com.example.seccraft_app.screens.portofolio.AddPortofolioScreen
 import com.example.seccraft_app.screens.portofolio.DetailPortofolioScreen
 import com.example.seccraft_app.screens.profile.EditProfileScreen
-import com.example.seccraft_app.screens.profile.MyKursus
 import com.example.seccraft_app.screens.profile.PointScreen
 import com.example.seccraft_app.screens.profile.ProfileScreen
 
@@ -49,14 +53,15 @@ fun MainNavGraph(
         composable(route = BottomBarScreen.Profil.route){
             ProfileScreen(navController)
         }
-        composable(route = BottomBarScreen.Portofolio.route){
+        composable(route = BottomBarScreen.Kursus.route){
+            KursusScreen(navController = navController)
+
+        }
+        composable(Screens.Portofolio.route){
             PortofolioScreen(navController)
         }
         composable(Screens.Point.route){
             PointScreen(navController)
-        }
-        composable(Screens.MyKursus.route){
-            MyKursus(navController)
         }
         composable(Screens.EditProfile.route){
             EditProfileScreen(navController)
@@ -78,6 +83,18 @@ fun MainNavGraph(
         }
         composable(Screens.DetailForum.route){
             DetailForumScreen(navController = navController, it.arguments?.getString("documentId")!!)
+        }
+        composable(Screens.Artikel.route){
+            ArtikelScreen(navController = navController)
+        }
+        composable(Screens.DetailArtikel.route){
+            DetailArtikelScreen(navController = navController, it.arguments?.getString("documentId")!!)
+        }
+        composable(Screens.DetailKursus.route){
+            DetailKursusScreen(navController = navController, it.arguments?.getString("documentId")!!)
+        }
+        composable(Screens.PembayaranKursus.route){
+            PembayaranScreen(navController = navController, it.arguments?.getString("documentId")!!)
         }
     }
 

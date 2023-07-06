@@ -1,4 +1,4 @@
-package com.example.seccraft_app.Collection.portofolio
+package com.example.seccraft_app.collection.portofolio
 
 data class DataPortofolio(
     val id: String = "",
@@ -8,5 +8,6 @@ data class DataPortofolio(
     val kategori: List<Any?>? = null,
     val deskripsi: String = "",
     val like: Int = 0,
-    val time: Any? = null
+    val time: Any? = null,
+    val idKursus : String= ""
 )

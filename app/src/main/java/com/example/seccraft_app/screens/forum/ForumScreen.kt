@@ -1,18 +1,13 @@
 package com.example.seccraft_app.screens.forum
 
 
-import android.net.Uri
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -27,7 +22,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.example.seccraft_app.R
 import androidx.compose.ui.res.stringResource
@@ -38,12 +32,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.seccraft_app.Collection.Forum.ForumCollection
-import com.example.seccraft_app.Collection.Forum.ReplyForum
-import com.example.seccraft_app.Collection.User.DataUser
+import com.example.seccraft_app.collection.forum.ForumCollection
+import com.example.seccraft_app.collection.forum.ReplyForum
+import com.example.seccraft_app.collection.User.DataUser
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.firestore.Query

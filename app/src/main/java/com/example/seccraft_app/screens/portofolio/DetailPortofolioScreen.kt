@@ -16,16 +16,18 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.R
-import com.example.seccraft_app.Accompanist
-import com.example.seccraft_app.BottomBarScreen
-import com.example.seccraft_app.Collection.User.DataUser
-import com.example.seccraft_app.Collection.portofolio.DataPortofolio
-import com.example.seccraft_app.Collection.portofolio.LikePortofolio
+import com.example.seccraft_app.screens.util.Accompanist
+import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.kursus.DataKursus
+import com.example.seccraft_app.collection.portofolio.DataPortofolio
+import com.example.seccraft_app.collection.portofolio.LikePortofolio
+import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.ui.theme.bg
 import com.example.seccraft_app.ui.theme.primary
 import com.example.seccraft_app.ui.theme.secondary
@@ -57,6 +59,7 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
             val judul = value.getString("judul").toString()
             val a = value.get("kategori")
             val deskripsi = value.getString("deskripsi").toString()
+            val idKursus = value.getString("idKursus").toString()
 
             dataPortofolio = dataPortofolio.copy(
                 id = id,
@@ -65,6 +68,7 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
                 judul = judul,
                 kategori = a as List<Any?>?,
                 deskripsi = deskripsi,
+                idKursus = idKursus
             )
 
         }
@@ -97,7 +101,7 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
                             contentDescription = "",
                             tint = Color.Black,
                             modifier = Modifier.clickable {
-                                navcontroller.navigate(BottomBarScreen.Portofolio.route)
+                                navcontroller.navigate(Screens.Portofolio.route)
                             }
                         )
 
@@ -127,7 +131,7 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(350.dp), shape = RectangleShape
+                                .height(300.dp), shape = RectangleShape
                         ) {
                             Image(
                                 painter = rememberAsyncImagePainter(model = dataPortofolio.image),
@@ -271,6 +275,76 @@ fun DetailPortofolioScreen(navcontroller: NavHostController, documentId: String)
 
                                 }
 
+                            }
+
+
+                            Text(
+                                text = stringResource(id = R.string.informasi_cource),
+                                style = MaterialTheme.typography.headlineLarge,
+                                modifier = Modifier.padding(bottom = 14.dp, top = 24.dp)
+                            )
+
+                            if (dataPortofolio.idKursus != "") {
+                                Card(
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp).clickable {
+                                            navcontroller.navigate("kursus_detail_screen/${dataPortofolio.idKursus}")
+                                    },
+                                    colors = CardDefaults.cardColors(Color(0xFFA6D1B2)),
+                                    shape = RoundedCornerShape(size = 14.dp)
+                                ) {
+
+                                    var dataKursus by remember {
+                                        mutableStateOf(DataKursus())
+                                    }
+
+                                    JetFirestore(
+                                        path = { document("kursus/${dataPortofolio.idKursus}") },
+                                        onSingleTimeDocumentFetch = { values, ex ->
+                                            val image = values!!.getString("image").toString()
+                                            val title = values.getString("title").toString()
+                                            dataKursus =
+                                                dataKursus.copy(image = image, title = title)
+                                        }
+                                    ) {
+
+
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Card(
+                                                modifier = Modifier
+                                                    .padding(8.dp)
+                                                    .size(74.dp)
+                                            ) {
+                                                Image(
+                                                    painter = rememberAsyncImagePainter(model = dataKursus.image),
+                                                    contentDescription = "",
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentScale = ContentScale.FillBounds
+                                                )
+                                            }
+
+
+                                            Text(
+                                                text = dataKursus.title,
+                                                style = MaterialTheme.typography.displayMedium,
+                                                maxLines = 2,
+                                                overflow = TextOverflow.Ellipsis,
+                                                modifier = Modifier.padding(start = 24.dp)
+                                            )
+                                            Spacer(modifier = Modifier.weight(1f))
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.arrow_right),
+                                                contentDescription = "",
+                                                Modifier.padding(end = 16.dp).size(24.dp)
+                                            )
+
+
+                                        }
+                                    }
+
+                                }
                             }
 
 

@@ -27,7 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.seccraft_app.Collection.User.DataUser
+import com.example.seccraft_app.screens.util.Accompanist
+import com.example.seccraft_app.collection.User.DataUser
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
@@ -43,12 +44,13 @@ private var number: String = ""
 
 @Composable
 fun RegisterScreen(navController: NavHostController) {
+    Accompanist().TopBar(color = primary)
     LazyColumn {
         item {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = bg),
+                    .background(color = primary),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(

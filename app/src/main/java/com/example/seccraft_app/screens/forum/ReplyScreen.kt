@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.BottomBarScreen
-import com.example.seccraft_app.Collection.Forum.ForumCollection
-import com.example.seccraft_app.Collection.Forum.ReplyForum
-import com.example.seccraft_app.Collection.User.DataUser
+import com.example.seccraft_app.collection.forum.ForumCollection
+import com.example.seccraft_app.collection.forum.ReplyForum
+import com.example.seccraft_app.collection.User.DataUser
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth

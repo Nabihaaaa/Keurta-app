@@ -1,4 +1,4 @@
-package com.example.seccraft_app
+package com.example.seccraft_app.screens.util
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable

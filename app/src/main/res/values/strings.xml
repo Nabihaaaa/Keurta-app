@@ -2,7 +2,8 @@
     <string name="app_name">ThreadTales-app</string>
     <!-- Home Screen String -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="Hai_user">Hai, User!</string>
+    <string name="selamat">Selamat datang</string>
+    <string name="semangat">Semangat dalam aktivitasmu.</string>
     <string name="points">Points</string>
     <string name="selengkapnya">selengkapnya</string>
     <string name="kursus">Kursus</string>
@@ -58,8 +59,23 @@
     <string name="deskripsi">Deskripsi</string>
     <string name="submit">Submit</string>
     <string name="lihat">lihat semua ></string>
+    <string name="informasi_cource">Informasi Cource Terkait:</string>
+    <string name="kursus_diikuti">Kursus yang diikuti</string>
     <!--Kursus Screen String-->
-    <string name="kursus_daring">Kursus daring</string>
+    <string name="langganan">Langganan</string>
+    <string name="alat_bahan">Alat dan bahan</string>
+    <string name="alat">Alat:</string>
+    <string name="bahan">Bahan:</string>
+    <string name="bayar">Bayar</string>
+    <string name="promo">Promo</string>
+    <string name="metode_pembayaran">Metode Pembayaran</string>
+    <string name="ringkasan">Ringkasan</string>
+    <string name="paket_kursus">Paket Kursus</string>
+    <string name="potongan_hrg">Potongan Harga</string>
+    <string name="total_pemby">Total Pembayaran</string>
+    <string name="paket_pilih">Paket Yang Dipilih</string>
+    <string name="gunakan_cd_prm">Gunakan Kode Promo</string>
+    <string name="pilih_mtd">Pilih Metode</string>
     <!--Forum Screen String-->
     <string name="forum">Forum</string>
     <string name="cari">Cari</string>

@@ -2,12 +2,15 @@ package com.example.seccraft_app.screens.portofolio
 
 import android.content.Context
 import android.net.Uri
+import android.provider.ContactsContract.Data
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,9 +20,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.seccraft_app.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -27,18 +34,29 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.seccraft_app.Accompanist
-import com.example.seccraft_app.BottomBarScreen
-import com.example.seccraft_app.Collection.portofolio.DataPortofolio
+import com.example.seccraft_app.collection.User.DataUserKursus
+import com.example.seccraft_app.collection.kursus.DataAlatdanBahan
+import com.example.seccraft_app.collection.kursus.DataKursus
+import com.example.seccraft_app.screens.util.Accompanist
+import com.example.seccraft_app.collection.portofolio.DataPortofolio
+import com.example.seccraft_app.navigation.Screens
+import com.example.seccraft_app.screens.kursus.getAlatDanBahan
+import com.example.seccraft_app.screens.kursus.getDataKursusUser
+import com.example.seccraft_app.screens.kursus.getKursusWithId
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.jet.firestore.JetFirestore
+import com.jet.firestore.getListOfObjects
+import com.jet.firestore.getObject
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +83,7 @@ fun AddPortofolioScreen(navController: NavHostController) {
                         contentDescription = "",
                         tint = Color.Black,
                         modifier = Modifier.clickable {
-                            navController.navigate(BottomBarScreen.Portofolio.route)
+                            navController.navigate(Screens.Portofolio.route)
                         }
                     )
 
@@ -139,7 +157,6 @@ fun AddPortofolioScreen(navController: NavHostController) {
                         }
 
                         var title by remember { mutableStateOf("") }
-                        var kategori by remember { mutableStateOf("") }
                         var deskripsi by remember { mutableStateOf("") }
 
                         TextField(
@@ -174,6 +191,117 @@ fun AddPortofolioScreen(navController: NavHostController) {
                             )
                         )
 
+                        var kursusUser by remember {
+                            mutableStateOf(listOf<DataKursus>())
+                        }
+
+                        val coroutineScope = rememberCoroutineScope()
+                        LaunchedEffect(Unit) {
+                            coroutineScope.launch {
+                                // Panggil fungsi suspend di sini
+                                kursusUser = getDataKursusUser()
+                            }
+                        }
+
+                        Log.d("isi Kursus", "AddPortofolioScreen: ${kursusUser.size}")
+
+                        var expandedKursus by remember {
+                            mutableStateOf(false)
+                        }
+
+                        var kursus by remember {
+                            mutableStateOf("")
+                        }
+                        var kursusTitle by remember {
+                            mutableStateOf("")
+                        }
+
+                        var textFieldSize by remember { mutableStateOf(Size.Zero) }
+
+                        Column(modifier = Modifier.wrapContentHeight()) {
+                            TextField(
+                                value = kursusTitle,
+                                placeholder = { Text(text = stringResource(id = R.string.kursus_diikuti), modifier = Modifier.clickable {
+                                    expandedKursus = !expandedKursus
+                                }) },
+                                onValueChange = {
+                                    kursusTitle = it
+                                },
+                                singleLine = true,
+                                readOnly = true,
+                                trailingIcon = {
+                                    if (expandedKursus)
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.arrow_down),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .rotate(180f)
+                                                .clickable {
+                                                    expandedKursus = !expandedKursus
+                                                }
+                                        )
+                                    else
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.arrow_down),
+                                            contentDescription = "",
+                                            modifier = Modifier.clickable {
+                                                expandedKursus = !expandedKursus
+                                            }
+                                        )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 14.dp)
+                                    .onGloballyPositioned { layoutCoordinates ->
+                                        textFieldSize = layoutCoordinates.size.toSize()
+                                    }
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color(0xFFA19B9B),
+                                        shape = RoundedCornerShape(size = 6.dp)
+                                    ),
+                                textStyle = TextStyle(
+                                    fontFamily = PoppinsFamily,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    platformStyle = PlatformTextStyle(includeFontPadding = false)
+                                ),
+                                colors = TextFieldDefaults.textFieldColors(
+                                    textColor = Color.Black,
+                                    placeholderColor = icon_faded,
+                                    cursorColor = Color.Black,
+                                    containerColor = Color.White,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    disabledIndicatorColor = Color.Transparent
+                                )
+                            )
+
+                            DropdownMenu(
+                                expanded = expandedKursus,
+                                onDismissRequest = { expandedKursus = false },
+                                modifier = Modifier
+                                    .width(with(LocalDensity.current){textFieldSize.width.toDp()})
+                            ) {
+                                kursusUser.forEach { label ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = label.title,
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        },
+                                        onClick = {
+                                            kursus = label.id
+                                            kursusTitle = label.title
+                                            expandedKursus = false
+                                        },
+                                    )
+                                }
+                            }
+
+                        }
+
 
                         TextField(
                             value = deskripsi,
@@ -181,7 +309,6 @@ fun AddPortofolioScreen(navController: NavHostController) {
                             onValueChange = {
                                 deskripsi = it
                             },
-
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(176.dp)
@@ -217,7 +344,7 @@ fun AddPortofolioScreen(navController: NavHostController) {
                             listKategori.forEachIndexed { idx, str ->
 
                                 var textKategori by remember { mutableStateOf(str) }
-                                var showDialog = remember { mutableStateOf(false) }
+                                val showDialog = remember { mutableStateOf(false) }
 
                                 if (showDialog.value) {
                                     Dialog(onDismissRequest = { showDialog.value = false }) {
@@ -292,7 +419,7 @@ fun AddPortofolioScreen(navController: NavHostController) {
                                     }
                                 }
 
-                                if(idx == 0){
+                                if (idx == 0) {
                                     Card(
                                         modifier = Modifier.clickable { showDialog.value = true },
                                         colors = CardDefaults.cardColors(secondary)
@@ -308,9 +435,8 @@ fun AddPortofolioScreen(navController: NavHostController) {
                                         )
 
                                     }
-                                }
-                                else{
-                                    if(listKategori[idx-1] != "") {
+                                } else {
+                                    if (listKategori[idx - 1] != "") {
                                         Card(
                                             modifier = Modifier
                                                 .clickable {
@@ -351,7 +477,8 @@ fun AddPortofolioScreen(navController: NavHostController) {
                                         listKategori,
                                         deskripsi,
                                         navController,
-                                        context
+                                        context,
+                                        kursus
                                     )
                                 },
                                 shape = RoundedCornerShape(size = 6.dp),
@@ -388,9 +515,10 @@ fun UploadPortofolio(
     kategori: SnapshotStateList<String>,
     deskripsi: String,
     navController: NavHostController,
-    current: Context
+    current: Context,
+    kursus: String
 ) {
-    if (imageUri != null && title != "" && deskripsi != "") {
+    if (imageUri != null && title != "" && deskripsi != "" && kursus != "" ) {
 
         val db = Firebase.firestore
         val auth = Firebase.auth
@@ -412,12 +540,13 @@ fun UploadPortofolio(
                         judul = title,
                         kategori = kategori,
                         deskripsi = deskripsi,
-                        time = timeNow
+                        time = timeNow,
+                        idKursus = kursus
                     )
                 db.collection("portofolio").document(id)
                     .set(data)
                     .addOnSuccessListener { documentReference ->
-                        navController.navigate(BottomBarScreen.Portofolio.route)
+                        navController.navigate(Screens.Portofolio.route)
                     }
             }
         }
@@ -429,3 +558,5 @@ fun UploadPortofolio(
 
 
 }
+
+

@@ -41,6 +41,12 @@ val Poppins = Typography(
         fontSize = 14.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
+    headlineLarge = TextStyle(
+        fontFamily = PoppinsFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp,
+        platformStyle = PlatformTextStyle(includeFontPadding = false)
+    ),
 
     titleLarge =TextStyle(
         fontFamily = PoppinsFamily,

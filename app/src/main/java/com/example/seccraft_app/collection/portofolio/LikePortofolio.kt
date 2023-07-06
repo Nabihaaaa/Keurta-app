@@ -1,4 +1,4 @@
-package com.example.seccraft_app.Collection.portofolio
+package com.example.seccraft_app.collection.portofolio
 
 data class LikePortofolio(
     val idUser : String = "",

@@ -3,6 +3,7 @@ package com.example.seccraft_app.screens.portofolio
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -28,10 +29,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.seccraft_app.Collection.User.DataUser
-import com.example.seccraft_app.Collection.portofolio.DataPortofolio
-import com.example.seccraft_app.Collection.portofolio.LikePortofolio
-import com.example.seccraft_app.Collection.portofolio.UserLikePortofolio
+import com.example.seccraft_app.BottomBarScreen
+import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.portofolio.DataPortofolio
+import com.example.seccraft_app.collection.portofolio.LikePortofolio
+import com.example.seccraft_app.collection.User.UserLikePortofolio
 import com.example.seccraft_app.R
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.ui.theme.*
@@ -99,12 +101,28 @@ fun PortofolioScreen(navController: NavHostController) {
 
             }
             Column(modifier = Modifier.padding(top = 28.dp)) {
-                Text(
-                    text = stringResource(id = R.string.portofolio),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 28.dp, start = 20.dp)
-                )
+
+                Row(
+                    modifier = Modifier.padding(bottom = 28.dp, start = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_left),
+                        contentDescription = "",
+                        tint = Color.Black,
+                        modifier = Modifier.clickable {
+                            navController.navigate(BottomBarScreen.Beranda.route)
+                        }
+                    )
+
+                    Text(
+                        text = stringResource(id = R.string.portofolio),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.Black,
+                        modifier = Modifier.padding(start = 26.dp)
+                    )
+                }
+
 
                 TextField(
                     value = searchText,
@@ -142,47 +160,74 @@ fun PortofolioScreen(navController: NavHostController) {
                 )
 
                 // Terkini dan populer
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 28.dp),
+                    contentAlignment = Alignment.Center
 
-                Row(modifier = Modifier.padding(start = 20.dp, top = 28.dp)) {
-                    Card(
+                ) {
+                    Divider(
                         modifier = Modifier
-                            .clickable {
-                                val prevPageIndex = pagerState.currentPage - 1
-                                coroutineScope.launch { pagerState.animateScrollToPage(prevPageIndex) }
-                            },
-                        colors = if (buttonSelected.value) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
-                            Color.White
-                        ),
-                        elevation = CardDefaults.cardElevation(4.dp)
+                            .height(26.dp)
+                            .width(2.dp), color = Color(0xFF9A9999), thickness = 1.dp
+                    )
+                    Column(
+                        modifier = Modifier.padding(end = 190.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = stringResource(id = R.string.terkini),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (buttonSelected.value) Color.White else secondary,
-                            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+                            style = MaterialTheme.typography.displayLarge,
+                            color = if (buttonSelected.value) Color.Black else Color(0xFF9A9999),
+                            modifier = Modifier
+                                .padding(bottom = 8.dp)
+                                .clickable {
+                                    val prevPageIndex = pagerState.currentPage - 1
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            prevPageIndex
+                                        )
+                                    }
+                                },
                         )
-                    }
+                        if (buttonSelected.value) {
+                            Divider(
+                                modifier = Modifier
+                                    .height(2.dp)
+                                    .width(110.dp), color = Color.Black, thickness = 1.dp
+                            )
+                        }
 
-                    Card(
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .clickable {
-                                val nextPageIndex = pagerState.currentPage + 1
-                                coroutineScope.launch { pagerState.animateScrollToPage(nextPageIndex) }
-                            },
-                        colors = if (!buttonSelected.value) CardDefaults.cardColors(secondary) else CardDefaults.cardColors(
-                            Color.White
-                        ),
-                        elevation = CardDefaults.cardElevation(4.dp)
+                    }
+                    Column(
+                        modifier = Modifier.padding(start = 190.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = stringResource(id = R.string.populer),
-                            color = if (!buttonSelected.value) Color.White else secondary,
-                            style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+                            style = MaterialTheme.typography.displayLarge,
+                            color = if (!buttonSelected.value) Color.Black else Color(0xFF9A9999),
+                            modifier = Modifier
+                                .padding(bottom = 8.dp)
+                                .clickable {
+                                    val nextPageIndex = pagerState.currentPage + 1
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            nextPageIndex
+                                        )
+                                    }
+                                }
                         )
-                    }
+                        if (!buttonSelected.value) {
+                            Divider(
+                                modifier = Modifier
+                                    .height(2.dp)
+                                    .width(110.dp), color = Color.Black, thickness = 1.dp
+                            )
+                        }
 
+                    }
                 }
 
                 JetFirestore(
@@ -232,13 +277,13 @@ fun GridItem(
             it.judul.contains(
                 searchText,
                 ignoreCase = true
-            )||
-            it.kategori!!.any { kategori ->
-                kategori.toString().contains(
-                    searchText,
-                    ignoreCase = true
-                )
-            }
+            ) ||
+                    it.kategori!!.any { kategori ->
+                        kategori.toString().contains(
+                            searchText,
+                            ignoreCase = true
+                        )
+                    }
         }
 
     }
@@ -259,7 +304,6 @@ fun GridItem(
             .fillMaxSize()
             .padding(top = 12.dp)
     ) {
-
         items(if (searchText != "") filteredList else dataPortofolio) { portofolio ->
             var user by remember { mutableStateOf(DataUser()) }
             JetFirestore(
@@ -564,7 +608,7 @@ fun CardItemDetail(
                     if (kategori!!.isNotEmpty()) {
                         Row(modifier = Modifier.fillMaxWidth()) {
                             kategori.forEachIndexed { index, kategori ->
-                                if (kategori.toString() != ""){
+                                if (kategori.toString() != "") {
                                     Card(
                                         shape = RoundedCornerShape(12.dp),
                                         modifier = Modifier.padding(

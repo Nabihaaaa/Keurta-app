@@ -1,4 +1,4 @@
-package com.example.seccraft_app.Collection.User
+package com.example.seccraft_app.collection.User
 
 data class DataUser(
     var image: String = "",
