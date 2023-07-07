@@ -2,6 +2,7 @@ package com.example.seccraft_app.screens.artikel
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -90,11 +91,11 @@ fun DetailArtikelScreen(navController: NavHostController, documentId: String) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .background(bg)
             .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         item {
             Surface(modifier = Modifier.fillMaxSize(), color = bg) {
-
                 JetFirestore(
                     path = { document("artikel/$documentId") },
                     onRealtimeDocumentFetch = { values, ex ->

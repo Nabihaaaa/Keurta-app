@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ThreadTales-app</string>
+    <string name="app_name">Keurta</string>
     <!-- Home Screen String -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="selamat">Selamat datang</string>
@@ -97,6 +97,7 @@
     <string name="buka">Buka</string>
     <!-- Artikel Screen String-->
     <string name="by_keurta">By KEURTA</string>
+    <string name="konten">Konten</string>
 
 
 

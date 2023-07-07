@@ -32,6 +32,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.collection.forum.ForumCollection
 import com.example.seccraft_app.R
+import com.example.seccraft_app.collection.forum.ForumUser
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
@@ -52,7 +53,7 @@ fun ImageForumScreen(navController: NavHostController) {
             imageUri = uri
         }
 
-    LaunchedEffect(launcher){
+    LaunchedEffect(launcher) {
         launcher.launch("image/*")
     }
 
@@ -229,9 +230,12 @@ fun uploadImage(text: String, navController: NavHostController, imageUri: Uri?, 
     val timeNow = FieldValue.serverTimestamp()
 
     val id = db.collection("Forum").document().id
-    var dataForum = ForumCollection(id = id, idUser = currentUser!!.uid, TextForum = text, time = timeNow)
+    var dataForum =
+        ForumCollection(id = id, idUser = currentUser!!.uid, TextForum = text, time = timeNow)
 
-    if (imageUri!=null){
+    val forumUser = ForumUser(id, timeNow)
+
+    if (imageUri != null) {
         val storageReference = FirebaseStorage.getInstance().reference
         val loc = storageReference.child("Forum/$id/ForumImage")
         val uploadTask = loc.putFile(imageUri)
@@ -241,8 +245,12 @@ fun uploadImage(text: String, navController: NavHostController, imageUri: Uri?, 
                 dataForum = dataForum.copy(image = it.toString())
                 db.collection("Forum").document(id)
                     .set(dataForum)
-                    .addOnSuccessListener { documentReference ->
-                        navController.navigate(BottomBarScreen.Forum.route)
+                    .addOnSuccessListener {
+                        db.collection("users/${currentUser.uid}/forum").document(id).set(forumUser)
+                            .addOnSuccessListener {
+                                navController.navigate(BottomBarScreen.Forum.route)
+                            }
+
                     }
                     .addOnFailureListener { e ->
 
@@ -250,7 +258,7 @@ fun uploadImage(text: String, navController: NavHostController, imageUri: Uri?, 
             }
 
         }
-    }else{
+    } else {
         Toast.makeText(context, "Image harus di upload!!", Toast.LENGTH_LONG).show()
     }
 

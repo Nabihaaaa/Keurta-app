@@ -230,7 +230,9 @@ fun LazyItemKursus(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 16.dp)
                     .clickable {
-                        navController.navigate("kursus_detail_screen/${kursus.id}")
+                        if (harga){
+                            navController.navigate("kursus_detail_screen/${kursus.id}")
+                        }
                     }
             ) {
                 Card(

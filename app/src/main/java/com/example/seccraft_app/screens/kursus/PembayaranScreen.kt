@@ -44,6 +44,9 @@ fun PembayaranScreen(navController: NavHostController, documentId: String) {
     var kursus by remember {
         mutableStateOf(DataKursus())
     }
+    var pengikut : Long by remember {
+        mutableStateOf(0)
+    }
     Log.d("isiDocs", "PembayaranScreen: $documentId")
 
     val coroutineScope = rememberCoroutineScope()
@@ -51,10 +54,11 @@ fun PembayaranScreen(navController: NavHostController, documentId: String) {
         coroutineScope.launch {
             // Panggil fungsi suspend di sini
             kursus = getKursusWithId(documentId)
+            pengikut = getPengikutKursus(documentId)
         }
     }
 
-    Scaffold(bottomBar = { BottomPembayaran(navController, kursus) }) {
+    Scaffold(bottomBar = { BottomPembayaran(navController, kursus, pengikut) }) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -344,13 +348,13 @@ fun PembayaranScreen(navController: NavHostController, documentId: String) {
 }
 
 @Composable
-fun BottomPembayaran(navController: NavHostController, kursus: DataKursus) {
+fun BottomPembayaran(navController: NavHostController, kursus: DataKursus, pengikut: Long) {
     Surface(modifier = Modifier.fillMaxWidth(), color = tertiary) {
         Box(contentAlignment = Alignment.Center) {
             Button(
                 onClick = {
 
-                          PembelianKursus(kursus,navController)
+                          PembelianKursus(kursus,navController, pengikut)
 
 
                 },
@@ -376,7 +380,7 @@ fun BottomPembayaran(navController: NavHostController, kursus: DataKursus) {
     }
 }
 
-fun PembelianKursus(kursus: DataKursus, navController: NavHostController) {
+fun PembelianKursus(kursus: DataKursus, navController: NavHostController, pengikut: Long) {
 
     val db = Firebase.firestore
     val currentUserId = Firebase.auth.currentUser!!.uid
@@ -394,7 +398,11 @@ fun PembelianKursus(kursus: DataKursus, navController: NavHostController) {
                     .document(kursus.id)
                     .set(data2)
                     .addOnSuccessListener{
-                        navController.navigate(BottomBarScreen.Kursus.route)
+                        db.document("kursus/${kursus.id}")
+                            .update("pengikut", pengikut)
+                            .addOnSuccessListener {
+                            navController.navigate(BottomBarScreen.Kursus.route)
+                        }
                     }
             }
 

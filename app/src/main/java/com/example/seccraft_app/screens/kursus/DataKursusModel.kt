@@ -115,6 +115,28 @@ suspend fun getDataKursusUser(): List<DataKursus> = suspendCoroutine { continuat
         }
 }
 
+suspend fun userKursusCheck(idKursus: String): Boolean = suspendCoroutine { continuation ->
+
+    val db = FirebaseFirestore.getInstance()
+    val user = Firebase.auth
+    val idUser = user.currentUser!!.uid
+
+    try {
+        db.document("users/$idUser/kursus/$idKursus").get().addOnSuccessListener { userKursus->
+            if (userKursus.exists()){
+                continuation.resume(true)
+            }
+            else {
+                continuation.resume(false)
+            }
+        }
+
+    } catch (e: FirebaseFirestoreException) {
+        continuation.resumeWithException(e)
+    }
+
+}
+
 
 suspend fun getKursusWithId(id: String): DataKursus = suspendCoroutine { continuation ->
 
@@ -131,6 +153,36 @@ suspend fun getKursusWithId(id: String): DataKursus = suspendCoroutine { continu
                     } else {
                         continuation.resumeWithException(IllegalStateException("Failed to retrieve data"))
                     }
+                } else {
+                    continuation.resumeWithException(NoSuchElementException("Document not found"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                continuation.resumeWithException(exception)
+            }
+    } catch (e: FirebaseFirestoreException) {
+        continuation.resumeWithException(e)
+    }
+
+}
+
+suspend fun getPengikutKursus(id: String): Long = suspendCoroutine { continuation ->
+
+    val db = FirebaseFirestore.getInstance()
+
+    try {
+        db.collection("kursus/$id/usersKursus")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                if (!snapshot.isEmpty) {
+                    val dataList = mutableListOf<DataUserKursus>()
+                    snapshot.documents.forEach { document->
+                        val data = document.toObject(DataUserKursus::class.java)
+                        if (data!=null){
+                            dataList.add(data)
+                        }
+                    }
+                    continuation.resume(dataList.size.toLong())
                 } else {
                     continuation.resumeWithException(NoSuchElementException("Document not found"))
                 }

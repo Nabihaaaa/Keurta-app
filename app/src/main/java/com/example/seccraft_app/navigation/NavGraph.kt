@@ -10,6 +10,7 @@ import com.example.seccraft_app.screens.home.HomeScreen
 import com.example.seccraft_app.screens.portofolio.PortofolioScreen
 import com.example.seccraft_app.screens.SplashScreen
 import com.example.seccraft_app.screens.aktivitas.AktivitasScreen
+import com.example.seccraft_app.screens.artikel.AddArtikelSceen
 import com.example.seccraft_app.screens.artikel.ArtikelScreen
 import com.example.seccraft_app.screens.artikel.DetailArtikelScreen
 import com.example.seccraft_app.screens.auth.LoginScreen
@@ -95,6 +96,9 @@ fun MainNavGraph(
         }
         composable(Screens.PembayaranKursus.route){
             PembayaranScreen(navController = navController, it.arguments?.getString("documentId")!!)
+        }
+        composable(Screens.AddArtikel.route){
+            AddArtikelSceen(navController=navController)
         }
     }
 

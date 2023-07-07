@@ -32,6 +32,7 @@ import com.example.seccraft_app.collection.forum.ForumCollection
 import com.example.seccraft_app.collection.forum.ReplyForum
 import com.example.seccraft_app.collection.User.DataUser
 import com.example.seccraft_app.R
+import com.example.seccraft_app.collection.forum.ReplyUser
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
@@ -545,6 +546,8 @@ private fun uploadText(
     var data =
         ReplyForum(id = id, idUser = currentUser!!.uid, TextReply = "@$name\n$text", time = timeNow)
 
+    val userReply = ReplyUser(id,documentId,timeNow)
+
     if (image != null) {
 
         val storageReference = FirebaseStorage.getInstance().reference
@@ -562,8 +565,12 @@ private fun uploadText(
                 )
                 db.collection("Forum/$documentId/ReplyForum").document(id)
                     .set(data)
-                    .addOnSuccessListener { documentReference ->
-                        navController.navigate(BottomBarScreen.Forum.route)
+                    .addOnSuccessListener {
+                        db.collection("users/${currentUser.uid}/replyForum")
+                            .document(id)
+                            .set(userReply).addOnSuccessListener {
+                            navController.navigate(BottomBarScreen.Forum.route)
+                        }
                     }
                     .addOnFailureListener { e ->
 
@@ -574,8 +581,12 @@ private fun uploadText(
     } else {
         db.collection("Forum/$documentId/ReplyForum").document(id)
             .set(data)
-            .addOnSuccessListener { documentReference ->
-                navController.navigate(BottomBarScreen.Forum.route)
+            .addOnSuccessListener {
+                db.collection("users/${currentUser.uid}/replyForum")
+                    .document(id)
+                    .set(userReply).addOnSuccessListener {
+                        navController.navigate(BottomBarScreen.Forum.route)
+                    }
             }
             .addOnFailureListener { e ->
 

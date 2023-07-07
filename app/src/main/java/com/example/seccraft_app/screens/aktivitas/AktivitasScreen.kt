@@ -1,5 +1,6 @@
 package com.example.seccraft_app.screens.aktivitas
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,6 +36,8 @@ import com.example.seccraft_app.collection.portofolio.DataPortofolio
 import com.example.seccraft_app.ui.theme.primary
 import com.example.seccraft_app.R
 import com.example.seccraft_app.collection.artikel.DataArtikel
+import com.example.seccraft_app.collection.forum.ForumCollection
+import com.example.seccraft_app.screens.forum.CardItemForum
 import com.example.seccraft_app.ui.theme.bg
 import com.example.seccraft_app.ui.theme.secondary
 import com.jet.firestore.JetFirestore
@@ -47,9 +50,12 @@ fun AktivitasScreen(
     dataAktivitasModel: DataAktivitasModel = viewModel()
 ) {
 
+    //suka
     val dataPortofolio = dataAktivitasModel.dataPortofolio
     val dataArtikel = dataAktivitasModel.dataArtikel
-
+    //riwayat
+    val dataPortolioUser = dataAktivitasModel.dataPortolioUser
+    val dataForumUser = dataAktivitasModel.dataForumUser
 
     Accompanist().TopBar(color = primary)
 
@@ -168,7 +174,7 @@ fun AktivitasScreen(
                                         }
                                     ) {
                                         Text(
-                                            text = stringResource(id = R.string.kelas),
+                                            text = stringResource(id = R.string.portofolio),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = if (buttonSelectedRiwayat.value) Color.White else Color.Black,
                                             modifier = Modifier.padding(
@@ -196,7 +202,7 @@ fun AktivitasScreen(
                                             }
                                     ) {
                                         Text(
-                                            text = stringResource(id = R.string.pesanan),
+                                            text = stringResource(id = R.string.forum),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = if (!buttonSelectedRiwayat.value) Color.White else Color.Black,
                                             modifier = Modifier.padding(
@@ -279,9 +285,11 @@ fun AktivitasScreen(
                     HorizontalPager(pageCount = 2, state = pagerStateRiwayat) {
 
                         if (buttonSelectedRiwayat.value) {
-
+                            CardItemPortofolioUser(dataPortolioUser, navController)
                         }
                         if (!buttonSelectedRiwayat.value) {
+
+                            CardForumUser(dataForumUser, navController)
 
                         }
 
@@ -311,6 +319,142 @@ fun AktivitasScreen(
 
 }
 
+@Composable
+fun CardForumUser(
+    dataForumUser: SnapshotStateList<ForumCollection>,
+    navController: NavHostController
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(top = 18.dp),
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        items(dataForumUser) { forum ->
+            CardItemForum(forum, navController)
+        }
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardItemPortofolioUser(
+    dataPortolioUser: SnapshotStateList<DataPortofolio>,
+    navController: NavHostController
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(top = 18.dp), modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Color.Transparent
+            )
+    ) {
+        items(dataPortolioUser) { portofolio ->
+
+            var userPortofolio by remember { mutableStateOf(DataUser()) }
+
+            JetFirestore(
+                path = { document("users/${portofolio.idUser}") },
+                onSingleTimeDocumentFetch = { value, exception ->
+                    userPortofolio = userPortofolio.copy(
+                        image = value!!.getString("image").toString(),
+                        name = value.getString("name").toString()
+                    )
+
+                }
+            ) {
+
+            }
+            Card(
+                modifier = Modifier
+                    .height(130.dp)
+                    .padding(top = 12.dp)
+                    .fillMaxWidth()
+                    .clickable { navController.navigate("portofolio_detail_screen/${portofolio.id}") },
+                colors = CardDefaults.cardColors(Color.Transparent)
+            ) {
+                Row {
+
+                    Card(modifier = Modifier.size(130.dp), shape = RoundedCornerShape(7.dp)) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = portofolio.image),
+                            contentDescription = "",
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Column(modifier = Modifier.padding(start = 14.dp)) {
+                        Text(
+                            text = portofolio.judul,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
+
+                        Text(
+                            text = portofolio.deskripsi,
+                            style = MaterialTheme.typography.labelMedium,
+                            modifier = Modifier.fillMaxWidth(),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Card(modifier = Modifier.size(24.dp), shape = CircleShape) {
+                                if (userPortofolio.image != "") {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(model = userPortofolio.image),
+                                        contentDescription = "",
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.user_profile),
+                                        contentDescription = "",
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            }
+
+                            Text(
+                                text = userPortofolio.name,
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Icon(
+                                painter = painterResource(id = R.drawable.love),
+                                contentDescription = "",
+                                tint = Color.Red,
+                                modifier = Modifier.size(24.dp)
+                            )
+
+                            Text(
+                                text = portofolio.like.toString(),
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+
+
+                        }
+
+                    }
+
+                }
+            }
+
+        }
+    }
+
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardItemArtikel(artikel: SnapshotStateList<DataArtikel>, navController: NavHostController) {
@@ -322,7 +466,7 @@ fun CardItemArtikel(artikel: SnapshotStateList<DataArtikel>, navController: NavH
         state = LazyListState()
     ) {
 
-        itemsIndexed(artikel) { idx,dataArtikel ->
+        itemsIndexed(artikel) { idx, dataArtikel ->
 
             val timestamp = dataArtikel.time as com.google.firebase.Timestamp
 
@@ -403,7 +547,7 @@ fun CardItemArtikel(artikel: SnapshotStateList<DataArtikel>, navController: NavH
                         ) {
 
                             Text(
-                                text = stringResource(id = R.string.by_keurta),
+                                text = "By ${dataArtikel.pembuat}",
                                 style = MaterialTheme.typography.labelSmall,
 
                                 )
@@ -426,7 +570,7 @@ fun CardItemArtikel(artikel: SnapshotStateList<DataArtikel>, navController: NavH
 
                 }
 
-                if (idx != artikel.size-1) {
+                if (idx != artikel.size - 1) {
 
                     Divider(
                         modifier = Modifier.fillMaxWidth(),
@@ -515,13 +659,13 @@ fun CardItemPortofolio(
                         ) {
 
                             Card(modifier = Modifier.size(24.dp), shape = CircleShape) {
-                                if (userPortofolio.image!=""){
+                                if (userPortofolio.image != "") {
                                     Image(
                                         painter = rememberAsyncImagePainter(model = userPortofolio.image),
                                         contentDescription = "",
                                         modifier = Modifier.fillMaxSize()
                                     )
-                                }else{
+                                } else {
                                     Icon(
                                         painter = painterResource(id = R.drawable.user_profile),
                                         contentDescription = "",

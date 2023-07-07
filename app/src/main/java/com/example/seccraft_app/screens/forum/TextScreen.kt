@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.collection.forum.ForumCollection
 import com.example.seccraft_app.R
+import com.example.seccraft_app.collection.forum.ForumUser
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
@@ -161,10 +162,15 @@ private fun uploadText(text: String, navController: NavHostController) {
     val data =
         ForumCollection(id = id, idUser = currentUser!!.uid, TextForum = text, time = timeNow)
 
+    val forumUser = ForumUser(id, timeNow)
+
     db.collection("Forum").document(id)
         .set(data)
-        .addOnSuccessListener { documentReference ->
-            navController.navigate(BottomBarScreen.Forum.route)
+        .addOnSuccessListener {
+            db.collection("users/${currentUser.uid}/forum").document(id).set(forumUser)
+                .addOnSuccessListener {
+                    navController.navigate(BottomBarScreen.Forum.route)
+                }
         }
         .addOnFailureListener { e ->
 

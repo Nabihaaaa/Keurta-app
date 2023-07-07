@@ -97,7 +97,7 @@ private fun RegisterAkun(
     password: String,
     name: String,
     number: String,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     val db = Firebase.firestore
     val auth = Firebase.auth
@@ -107,7 +107,7 @@ private fun RegisterAkun(
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "createUserWithEmail:success")
 
-                val dataUser = DataUser("",name, email, number)
+                val dataUser = DataUser("",name, email, number, "user")
                 val currentUser = auth.currentUser
 
                 db.collection("users").document(currentUser?.uid!!)

@@ -15,6 +15,7 @@ sealed class Screens(val route: String){
     object DetailForum : Screens("forum_detail_screen/{documentId}")
     object Artikel : Screens("artikel_screen")
     object DetailArtikel : Screens("artikel_detail_screen/{documentId}")
+    object AddArtikel : Screens("artikel_add_screen")
     object DetailKursus : Screens("kursus_detail_screen/{documentId}")
     object PembayaranKursus : Screens("pembayaran_kursus_screen/{documentId}")
 }

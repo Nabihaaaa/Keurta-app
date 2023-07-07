@@ -4,7 +4,6 @@ data class DataUser(
     var image: String = "",
     var name: String = "",
     var email: String = "",
-    var number: String = ""
-){
-    constructor(): this ("","","","")
-}
+    var number: String = "",
+    var role : String=""
+)

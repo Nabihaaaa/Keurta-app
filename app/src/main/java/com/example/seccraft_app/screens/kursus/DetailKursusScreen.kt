@@ -47,19 +47,24 @@ fun DetailKursusScreen(navController: NavHostController, documentId: String) {
     var bahan by remember {
         mutableStateOf(listOf<DataAlatdanBahan>())
     }
+    var userKursusCheck by remember {
+        mutableStateOf(false)
+    }
 
 
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             // Panggil fungsi suspend di sini
+            userKursusCheck = userKursusCheck(documentId)
             kursus = getKursusWithId(documentId)
             alat = getAlatDanBahan(documentId, "alat")
             bahan = getAlatDanBahan(documentId, "bahan")
+
         }
     }
 
-    Scaffold(bottomBar = { BottomKursusDetail(kursus, navController) }) {
+    Scaffold(bottomBar = { BottomKursusDetail(kursus, navController, userKursusCheck) }) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -203,50 +208,72 @@ fun DetailKursusScreen(navController: NavHostController, documentId: String) {
 }
 
 @Composable
-fun BottomKursusDetail(kursus: DataKursus, navController: NavHostController) {
+fun BottomKursusDetail(
+    kursus: DataKursus,
+    navController: NavHostController,
+    userKursusCheck: Boolean
+) {
     Surface(modifier = Modifier.fillMaxWidth(), color = tertiary) {
 
-        Row(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Column {
+        if (userKursusCheck){
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.padding(vertical = 16.dp),
+            ){
                 Text(
-                    text = kursus.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Text(
-                    text = "Rp. ${formatHarga(kursus.harga)}",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    color = secondary
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = {
-                          navController.navigate("pembayaran_kursus_screen/${kursus.id}")
-                },
-                contentPadding = PaddingValues(0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    secondary
-                ),
-                shape = RoundedCornerShape(15.dp)
-            ) {
-
-                Text(
-                    text = stringResource(id = R.string.langganan),
-                    color = Color.White,
+                    text = "Anda sudah membeli kursus ini",
+                    color = Color.Black,
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 20.sp,
                     modifier = Modifier.padding(10.dp)
                 )
-
             }
 
+        }else{
+            Row(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Column {
+                    Text(
+                        text = kursus.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "Rp. ${formatHarga(kursus.harga)}",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        color = secondary
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Button(
+                    onClick = {
+                        navController.navigate("pembayaran_kursus_screen/${kursus.id}")
+                    },
+                    contentPadding = PaddingValues(0.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        secondary
+                    ),
+                    shape = RoundedCornerShape(15.dp)
+                ) {
+
+                    Text(
+                        text = stringResource(id = R.string.langganan),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(10.dp)
+                    )
+
+                }
+
+            }
         }
+
+
 
     }
 }
