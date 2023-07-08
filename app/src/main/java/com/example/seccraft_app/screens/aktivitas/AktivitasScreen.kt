@@ -116,38 +116,49 @@ fun AktivitasScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
 
-                            Text(
-                                text = stringResource(id = R.string.riwayat),
-                                style = MaterialTheme.typography.displayLarge,
-                                textDecoration = if (buttonSelectedAktivitas.value) TextDecoration.Underline else TextDecoration.None,
-                                modifier = Modifier
-                                    .padding(end = 18.dp)
-                                    .clickable {
-                                        val prevPageIndex = pagerStateAktivitas.currentPage - 1
-                                        coroutineScope.launch {
-                                            pagerStateAktivitas.animateScrollToPage(
-                                                prevPageIndex
-                                            )
-                                        }
+                            Column(modifier = Modifier
+                                .padding(end = 18.dp)
+                                .clickable {
+                                    val prevPageIndex = pagerStateAktivitas.currentPage - 1
+                                    coroutineScope.launch {
+                                        pagerStateAktivitas.animateScrollToPage(
+                                            prevPageIndex
+                                        )
                                     }
+                                }) {
 
-                            )
+                                Text(
+                                    text = stringResource(id = R.string.riwayat),
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = if (buttonSelectedAktivitas.value) Color.Black else Color(0x80252525),
+                                )
 
-                            Text(
-                                text = stringResource(id = R.string.suka),
-                                style = MaterialTheme.typography.displayLarge,
-                                textDecoration = if (!buttonSelectedAktivitas.value) TextDecoration.Underline else TextDecoration.None,
-                                modifier = Modifier
-                                    .padding(end = 18.dp)
-                                    .clickable {
-                                        val nextPageIndex = pagerStateAktivitas.currentPage + 1
-                                        coroutineScope.launch {
-                                            pagerStateAktivitas.animateScrollToPage(
-                                                nextPageIndex
-                                            )
-                                        }
+                                if (buttonSelectedAktivitas.value){
+                                    Divider(modifier = Modifier.width(64.dp), thickness = 1.dp, color = Color.Black)
+                                }
+                            }
+
+                            Column( modifier = Modifier
+                                .padding(end = 18.dp)
+                                .clickable {
+                                    val nextPageIndex = pagerStateAktivitas.currentPage + 1
+                                    coroutineScope.launch {
+                                        pagerStateAktivitas.animateScrollToPage(
+                                            nextPageIndex
+                                        )
                                     }
-                            )
+                                }
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.suka),
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = if (!buttonSelectedAktivitas.value) Color.Black else Color(0x80252525),
+                                    )
+
+                                if (!buttonSelectedAktivitas.value){
+                                    Divider(modifier = Modifier.width(40.dp), thickness = 1.dp, color = Color.Black)
+                                }
+                            }
 
                         }
 

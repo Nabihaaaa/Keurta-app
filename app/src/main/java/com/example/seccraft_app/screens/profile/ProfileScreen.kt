@@ -53,7 +53,7 @@ fun ProfileScreen(
                             .padding(horizontal = 20.dp)
                     ) {
                         UserData(navController, getData)
-                        Fiture(navController)
+                        //Fiture(navController)
                         Akun(navController)
                         InfoLanjutan()
                     }
@@ -154,7 +154,7 @@ fun InfoLanjutan() {
                     .wrapContentHeight()
                     .padding(vertical = 16.dp)
             ) {
-                Icon(
+                Image(
                     painter = painterResource(id = R.drawable.information),
                     contentDescription = ""
                 )
@@ -189,7 +189,7 @@ fun Akun(navController: NavHostController) {
         elevation = CardDefaults.cardElevation(2.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp)
+            .padding(top = 14.dp)
             .wrapContentHeight()
     ) {
         Column(
@@ -205,37 +205,12 @@ fun Akun(navController: NavHostController) {
                 color = black_25,
                 modifier = Modifier.padding()
             )
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(top = 12.dp, bottom = 16.dp)
-            ) {
-                Image(painter = painterResource(id = R.drawable.clock), contentDescription = "")
-                Text(
-                    text = stringResource(id = R.string.aktivitas),
-                    fontFamily = PoppinsFamily,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = black_25,
-                    modifier = Modifier.padding(start = 4.dp),
-                    style = LocalTextStyle.current.copy(
-                        platformStyle = PlatformTextStyle(includeFontPadding = false)
-                    )
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Image(
-                    painter = painterResource(id = R.drawable.arrow_right),
-                    contentDescription = ""
-                )
-            }
-            Divider(color = gray_DAA, thickness = 1.dp)
 
             Row(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(vertical = 16.dp)
+                    .padding(top = 12.dp, bottom = 16.dp)
             ) {
                 Image(painter = painterResource(id = R.drawable.help), contentDescription = "")
                 Text(
