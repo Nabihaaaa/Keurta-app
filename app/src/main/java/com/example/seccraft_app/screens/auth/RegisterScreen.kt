@@ -255,7 +255,7 @@ fun InputPasswordRegister() {
 fun BelumAkun(navController: NavHostController) {
     Row(
         modifier = Modifier
-            .padding(top = 48.dp, bottom = 48.dp)
+            .padding(top = 48.dp, bottom = 100.dp)
             .fillMaxWidth(), horizontalArrangement = Arrangement.Center
     ) {
         Text(

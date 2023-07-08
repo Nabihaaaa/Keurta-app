@@ -45,13 +45,13 @@ private var password: String = ""
 @Composable
 fun LoginScreen(navController: NavHostController) {
     Accompanist().TopBar(color = primary)
-    LazyColumn {
+    LazyColumn(modifier = Modifier
+        .fillMaxSize()
+        .background(color = primary)
+    ) {
         item {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = primary),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
@@ -119,7 +119,7 @@ private fun Login(
 fun TextAkun(navController: NavHostController) {
     Row(
         modifier = Modifier
-            .padding(top = 48.dp, bottom = 48.dp)
+            .padding(top = 48.dp, bottom = 100.dp)
             .fillMaxWidth(), horizontalArrangement = Arrangement.Center
     ) {
         Text(
