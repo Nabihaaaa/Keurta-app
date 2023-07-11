@@ -291,31 +291,12 @@ fun PortofolioCardItem(
         ) {
             items(portofolio) { data ->
 
-                val showDialog = remember { mutableStateOf(false) }
                 var userPortofolio by remember {
                     mutableStateOf(DataUser())
                 }
                 var dataLike by remember { mutableStateOf(listOf<LikePortofolio>()) }
                 var likeCount by remember { mutableStateOf(0) }
                 var likeStatus by remember { mutableStateOf(LikePortofolio()) }
-
-                if (showDialog.value) {
-                    CardItemDetail(
-                        data.judul,
-                        likeCount,
-                        likeStatus.like,
-                        data.deskripsi,
-                        userPortofolio.name,
-                        userPortofolio.image,
-                        data.kategori,
-                        data.image,
-                        data.id,
-                        navController
-                    ) {
-                        showDialog.value = it
-                    }
-                }
-
 
                 Card(
                     modifier = Modifier
@@ -325,9 +306,6 @@ fun PortofolioCardItem(
                             onClick = {
                                 navController.navigate("portofolio_detail_screen/${data.id}")
                             },
-                            onLongClick = {
-                                showDialog.value = true
-                            }
                         ),
                     shape = RoundedCornerShape(7.dp),
                     colors = CardDefaults.cardColors(

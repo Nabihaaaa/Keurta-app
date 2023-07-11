@@ -131,7 +131,9 @@ fun KursusScreen(dataKursusModel: DataKursusModel = viewModel(), navController: 
                                 Text(
                                     text = stringResource(id = R.string.kursus),
                                     style = MaterialTheme.typography.displayLarge,
-                                    color = if (buttonSelected.value) Color.Black else Color(0xFF9A9999),
+                                    color = if (buttonSelected.value) Color.Black else Color(
+                                        0xFF9A9999
+                                    ),
                                     modifier = Modifier
                                         .padding(bottom = 8.dp)
                                         .clickable {
@@ -159,7 +161,9 @@ fun KursusScreen(dataKursusModel: DataKursusModel = viewModel(), navController: 
                                 Text(
                                     text = stringResource(id = R.string.kursus) + " saya",
                                     style = MaterialTheme.typography.displayLarge,
-                                    color = if (!buttonSelected.value) Color.Black else Color(0xFF9A9999),
+                                    color = if (!buttonSelected.value) Color.Black else Color(
+                                        0xFF9A9999
+                                    ),
                                     modifier = Modifier
                                         .padding(bottom = 8.dp)
                                         .clickable {
@@ -222,15 +226,14 @@ fun LazyItemKursus(
     }
 
     val item = if (search != "") filteredList else dataKursus
-
-    item.forEachIndexed { idx, kursus ->
-        Column {
+    Column {
+        item.forEachIndexed { idx, kursus ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 16.dp)
                     .clickable {
-                        if (harga){
+                        if (harga) {
                             navController.navigate("kursus_detail_screen/${kursus.id}")
                         }
                     }
@@ -270,9 +273,9 @@ fun LazyItemKursus(
                             .padding(top = 8.dp)
                             .fillMaxWidth()
                     )
-                    if (harga){
+                    if (harga) {
                         Text(
-                            text = "Rp. "+formatHarga(kursus.harga),
+                            text = "Rp. " + formatHarga(kursus.harga),
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.End,
                             modifier = Modifier
@@ -285,10 +288,12 @@ fun LazyItemKursus(
                 }
 
             }
-            if (idx != dataKursus.size-1){
-                Divider(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp), thickness = 1.dp, color = Color(0x4D000000))
+            if (idx != dataKursus.size - 1) {
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp), thickness = 1.dp, color = Color(0x4D000000)
+                )
             }
 
         }

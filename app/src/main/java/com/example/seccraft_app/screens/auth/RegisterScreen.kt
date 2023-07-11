@@ -1,7 +1,9 @@
 package com.example.seccraft_app.screens.auth
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -98,6 +102,7 @@ private fun RegisterAkun(
     name: String,
     number: String,
     navController: NavHostController,
+    context: Context,
 ) {
     val db = Firebase.firestore
     val auth = Firebase.auth
@@ -113,13 +118,14 @@ private fun RegisterAkun(
                 db.collection("users").document(currentUser?.uid!!)
                     .set(dataUser)
                     .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot success")
+                        Toast.makeText(context, R.string.register_sc, Toast.LENGTH_LONG).show()
+                        navController.navigate(Screens.Login.route)
                     }
                     .addOnFailureListener { e ->
-                        Log.w(TAG, "Error adding document", e)
+                        Toast.makeText(context, R.string.register_fail, Toast.LENGTH_LONG).show()
                     }
 
-                navController.navigate(Screens.Login.route)
+
             } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -175,6 +181,9 @@ fun InputEmailRegister() {
 
 @Composable
 fun InputPasswordRegister() {
+    var open by remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier
             .padding(top = 16.dp)
@@ -191,14 +200,22 @@ fun InputPasswordRegister() {
         val trailingIconView = @Composable {
             IconButton(
                 onClick = {
-
+                    open = !open
                 },
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.eye_close),
-                    contentDescription = "",
-                    tint = Color.Black
-                )
+                if (open) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.eye_open),
+                        contentDescription = "",
+                        tint = icon_faded
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.eye_close),
+                        contentDescription = "",
+                        tint = icon_faded
+                    )
+                }
             }
         }
         var inp_password by rememberSaveable { mutableStateOf("") }
@@ -224,7 +241,7 @@ fun InputPasswordRegister() {
                 platformStyle = PlatformTextStyle(includeFontPadding = false)
             ),
             isError = isError,
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (open) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             shape = RoundedCornerShape(10.dp),
             singleLine = true,
@@ -285,9 +302,10 @@ fun BelumAkun(navController: NavHostController) {
 
 @Composable
 fun BtnDaftar(navController: NavHostController) {
+    val context = LocalContext.current
     Button(
         onClick = {
-            RegisterAkun(email, password, name, number, navController)
+            RegisterAkun(email, password, name, number, navController, context)
         },
         modifier = Modifier
             .fillMaxWidth()

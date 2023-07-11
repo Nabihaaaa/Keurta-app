@@ -184,7 +184,7 @@ suspend fun getPengikutKursus(id: String): Long = suspendCoroutine { continuatio
                     }
                     continuation.resume(dataList.size.toLong())
                 } else {
-                    continuation.resumeWithException(NoSuchElementException("Document not found"))
+                    continuation.resume(0)
                 }
             }
             .addOnFailureListener { exception ->

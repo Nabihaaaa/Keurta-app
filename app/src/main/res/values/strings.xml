@@ -20,8 +20,10 @@
     <string name="google">Google</string>
     <string name="belum_akun">Belum memiliki akun?</string>
     <string name="daftar">Daftar</string>
-    <string name="login_sc">Login Success</string>
+    <string name="login_sc">Login Berhasil</string>
     <string name="login_fail">Login Failed</string>
+    <string name="register_sc">Register Berhasil Silahkan Login</string>
+    <string name="register_fail">Register Gagal</string>
     <string name="empty">email or password is empty</string>
     <!-- Register Screen String -->
     <string name="daftar_desc">Isi data diri kamu untuk bergabung bersama kami</string>

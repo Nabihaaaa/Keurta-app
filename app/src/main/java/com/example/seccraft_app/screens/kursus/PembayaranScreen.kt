@@ -1,6 +1,8 @@
 package com.example.seccraft_app.screens.kursus
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -349,12 +352,13 @@ fun PembayaranScreen(navController: NavHostController, documentId: String) {
 
 @Composable
 fun BottomPembayaran(navController: NavHostController, kursus: DataKursus, pengikut: Long) {
+    val context = LocalContext.current
     Surface(modifier = Modifier.fillMaxWidth(), color = tertiary) {
         Box(contentAlignment = Alignment.Center) {
             Button(
                 onClick = {
 
-                          PembelianKursus(kursus,navController, pengikut)
+                          PembelianKursus(kursus,navController, pengikut, context)
 
 
                 },
@@ -380,7 +384,12 @@ fun BottomPembayaran(navController: NavHostController, kursus: DataKursus, pengi
     }
 }
 
-fun PembelianKursus(kursus: DataKursus, navController: NavHostController, pengikut: Long) {
+fun PembelianKursus(
+    kursus: DataKursus,
+    navController: NavHostController,
+    pengikut: Long,
+    context: Context
+) {
 
     val db = Firebase.firestore
     val currentUserId = Firebase.auth.currentUser!!.uid
@@ -401,6 +410,7 @@ fun PembelianKursus(kursus: DataKursus, navController: NavHostController, pengik
                         db.document("kursus/${kursus.id}")
                             .update("pengikut", pengikut)
                             .addOnSuccessListener {
+                                Toast.makeText(context, "Kursus Berhasil Dibeli", Toast.LENGTH_LONG).show()
                             navController.navigate(BottomBarScreen.Kursus.route)
                         }
                     }

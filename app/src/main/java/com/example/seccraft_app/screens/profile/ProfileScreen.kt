@@ -40,7 +40,8 @@ fun ProfileScreen(
 
     Accompanist().TopBar(color = primary)
     Surface(
-        color = bg
+        color = bg,
+        modifier = Modifier.fillMaxSize()
     ) {
         LazyColumn() {
             item {

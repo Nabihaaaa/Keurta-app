@@ -435,7 +435,9 @@ fun CardItemPortofolioUser(
                             Text(
                                 text = userPortofolio.name,
                                 style = MaterialTheme.typography.labelMedium,
-                                modifier = Modifier.padding(start = 4.dp)
+                                modifier = Modifier.padding(start = 4.dp),
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
@@ -688,7 +690,9 @@ fun CardItemPortofolio(
                             Text(
                                 text = userPortofolio.name,
                                 style = MaterialTheme.typography.labelMedium,
-                                modifier = Modifier.padding(start = 4.dp)
+                                modifier = Modifier.padding(start = 4.dp),
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis
                             )
 
                             Spacer(modifier = Modifier.weight(1f))

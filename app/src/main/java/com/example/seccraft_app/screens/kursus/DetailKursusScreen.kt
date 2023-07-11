@@ -1,6 +1,9 @@
 package com.example.seccraft_app.screens.kursus
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.screens.util.Accompanist
@@ -149,6 +154,7 @@ fun DetailKursusScreen(navController: NavHostController, documentId: String) {
                                 text = stringResource(id = R.string.alat),
                                 style = MaterialTheme.typography.labelMedium,
                             )
+                            val context = LocalContext.current
                             alat.forEachIndexed { idx, alat ->
                                 Log.d("isi alat", "DetailKursusScreen: ${alat.nama}")
                                 LinkText(
@@ -160,8 +166,19 @@ fun DetailKursusScreen(navController: NavHostController, documentId: String) {
                                             text = "(Link)",
                                             tag = "link_olshop",
                                             annotation = alat.link,
-                                            onClick = {
-                                                Log.d("Link text", "${it.tag} ${it.item}")
+                                            onClick = { uri ->
+                                                if (uri.item != "") {
+                                                    val openURL = Intent(Intent.ACTION_VIEW)
+                                                    openURL.data = Uri.parse(uri.item)
+                                                    startActivity(context, openURL, null)
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "tidak memiliki link",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                }
+
                                             }
                                         )
                                     ),
@@ -183,8 +200,18 @@ fun DetailKursusScreen(navController: NavHostController, documentId: String) {
                                             text = "(Link)",
                                             tag = "link_olshop",
                                             annotation = bahan.link,
-                                            onClick = {
-                                                Log.d("Link text", "${it.tag} ${it.item}")
+                                            onClick = {uri->
+                                                if (uri.item != "") {
+                                                    val openURL = Intent(Intent.ACTION_VIEW)
+                                                    openURL.data = Uri.parse(uri.item)
+                                                    startActivity(context, openURL, null)
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "tidak memiliki link",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                }
                                             }
                                         )
                                     ),
@@ -215,11 +242,11 @@ fun BottomKursusDetail(
 ) {
     Surface(modifier = Modifier.fillMaxWidth(), color = tertiary) {
 
-        if (userKursusCheck){
+        if (userKursusCheck) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.padding(vertical = 16.dp),
-            ){
+            ) {
                 Text(
                     text = "Anda sudah membeli kursus ini",
                     color = Color.Black,
@@ -229,7 +256,7 @@ fun BottomKursusDetail(
                 )
             }
 
-        }else{
+        } else {
             Row(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -272,7 +299,6 @@ fun BottomKursusDetail(
 
             }
         }
-
 
 
     }

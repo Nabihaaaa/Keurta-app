@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,9 +46,10 @@ private var password: String = ""
 @Composable
 fun LoginScreen(navController: NavHostController) {
     Accompanist().TopBar(color = primary)
-    LazyColumn(modifier = Modifier
-        .fillMaxSize()
-        .background(color = primary)
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = primary)
     ) {
         item {
             Column(
@@ -99,9 +101,9 @@ private fun Login(
     context: Context
 ) {
     auth = Firebase.auth
-    if (email=="" && password==""){
+    if (email == "" && password == "") {
         Toast.makeText(context, R.string.empty, Toast.LENGTH_LONG).show()
-    }else{
+    } else {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener() { task ->
                 if (task.isSuccessful) {
@@ -274,6 +276,11 @@ fun InputEmail() {
 
 @Composable
 fun InputPassword() {
+
+    var open by remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             .padding(top = 16.dp)
@@ -290,14 +297,23 @@ fun InputPassword() {
         val trailingIconView = @Composable {
             IconButton(
                 onClick = {
-
+                    open = !open
                 },
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.eye_close),
-                    contentDescription = "",
-                    tint = Color.Black
-                )
+                if (open) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.eye_open),
+                        contentDescription = "",
+                        tint = icon_faded
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.eye_close),
+                        contentDescription = "",
+                        tint = icon_faded
+                    )
+                }
+
             }
         }
         OutlinedTextField(
@@ -310,7 +326,7 @@ fun InputPassword() {
                 fontWeight = FontWeight.Medium,
                 platformStyle = PlatformTextStyle(includeFontPadding = false)
             ),
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (open) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             shape = RoundedCornerShape(10.dp),
             singleLine = true,
