@@ -34,6 +34,7 @@ import com.google.firebase.ktx.Firebase
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
+    signOutGoogle : () -> Unit,
     dataProfileModel: DataProfileModel = viewModel()
 ) {
     val getData = dataProfileModel.state.value
@@ -55,7 +56,7 @@ fun ProfileScreen(
                     ) {
                         UserData(navController, getData)
                         //Fiture(navController)
-                        Akun(navController)
+                        Akun(navController, signOutGoogle)
                         InfoLanjutan()
                     }
 
@@ -183,7 +184,7 @@ fun InfoLanjutan() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Akun(navController: NavHostController) {
+fun Akun(navController: NavHostController, signOutGoogle: () -> Unit) {
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(Color.White),
@@ -264,6 +265,7 @@ fun Akun(navController: NavHostController) {
                     .clickable {
                         navController.navigate(Screens.Login.route)
                         Firebase.auth.signOut()
+                        signOutGoogle
                     }
                     .fillMaxWidth()
                     .wrapContentHeight()

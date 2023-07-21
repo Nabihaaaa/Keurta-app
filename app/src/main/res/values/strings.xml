@@ -100,7 +100,8 @@
     <!-- Artikel Screen String-->
     <string name="by_keurta">By KEURTA</string>
     <string name="konten">Konten</string>
-
+    <!-- Google String-->
+    <string name="default_web_client_id_id">931454459929-b5rqm6sst1la7s5qpthpusqftdqq5clc.apps.googleusercontent.com</string>
 
 
 </resources>

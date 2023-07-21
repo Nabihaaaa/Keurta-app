@@ -63,7 +63,6 @@ class DataHomeModel : ViewModel() {
             }
 
         }
-
     }
 
     private fun getDataPortofolio() {

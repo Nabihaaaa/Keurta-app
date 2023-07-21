@@ -34,9 +34,12 @@ import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
+import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.googleSignIn.SignInState
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 private lateinit var auth: FirebaseAuth
@@ -44,7 +47,11 @@ private var email: String = ""
 private var password: String = ""
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(
+    navController: NavHostController,
+    state: SignInState,
+    onSignInClick: () -> Unit
+) {
     Accompanist().TopBar(color = primary)
     LazyColumn(
         modifier = Modifier
@@ -83,7 +90,7 @@ fun LoginScreen(navController: NavHostController) {
                         InputPassword()
                         LupaSandi()
                         BtnMasuk(navController)
-                        BtnGoogle()
+                        BtnGoogle(state, onSignInClick)
                         TextAkun(navController)
                     }
                 }
@@ -92,7 +99,6 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 }
-
 
 private fun Login(
     email: String,
@@ -151,9 +157,24 @@ fun TextAkun(navController: NavHostController) {
 }
 
 @Composable
-fun BtnGoogle() {
+fun BtnGoogle(
+    state: SignInState,
+    onSignInClick: () -> Unit,
+) {
+    val context = LocalContext.current
+    LaunchedEffect(key1 = state.signInError) {
+        state.signInError?.let { error ->
+            Toast.makeText(
+                context,
+                error,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
     Button(
-        onClick = { /*TODO*/ },
+        onClick = {
+            onSignInClick.invoke()
+        },
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
@@ -178,6 +199,7 @@ fun BtnGoogle() {
         }
     }
 }
+
 
 @Composable
 fun TextMasuk() {

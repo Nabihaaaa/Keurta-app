@@ -112,13 +112,14 @@ private fun RegisterAkun(
                 // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "createUserWithEmail:success")
 
-                val dataUser = DataUser("",name, email, number, "user")
+
                 val currentUser = auth.currentUser
+                val dataUser = DataUser("",name, email, number, "user")
 
                 db.collection("users").document(currentUser?.uid!!)
                     .set(dataUser)
                     .addOnSuccessListener { documentReference ->
-                        Toast.makeText(context, R.string.register_sc, Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, R.string.login_sc, Toast.LENGTH_LONG).show()
                         navController.navigate(Screens.Login.route)
                     }
                     .addOnFailureListener { e ->

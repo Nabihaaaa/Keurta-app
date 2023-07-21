@@ -8,14 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.seccraft_app.ui.theme.Poppins
-import com.example.seccraft_app.ui.theme.secondary
+import com.example.seccraft_app.navigation.MainNavGraph
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

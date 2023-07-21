@@ -1,5 +1,6 @@
 package com.example.seccraft_app.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -78,6 +79,7 @@ fun HomeScreen(navController: NavHostController, dataHomeModel: DataHomeModel = 
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.padding(bottom = 8.dp, top = 16.dp)
                             )
+                            Log.d("nama suka ga muncul", "HomeScreen: ${user.name}")
                             Text(
                                 text = stringResource(id = R.string.semangat),
                                 style = MaterialTheme.typography.labelSmall,
