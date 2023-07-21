@@ -235,6 +235,8 @@ fun LazyItemKursus(
                     .clickable {
                         if (harga) {
                             navController.navigate("kursus_detail_screen/${kursus.id}")
+                        }else{
+                            navController.navigate("konten_kursus_screen/${kursus.id}")
                         }
                     }
             ) {
