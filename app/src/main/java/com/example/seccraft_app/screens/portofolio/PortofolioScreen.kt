@@ -587,15 +587,13 @@ fun CardItemDetail(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Card(modifier = Modifier.size(32.dp), shape = CircleShape) {
-
                             Image(
                                 painter = if (imageUser != "") rememberAsyncImagePainter(model = imageUser) else
                                     painterResource(id = R.drawable.user_profile),
                                 contentDescription = "",
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.FillBounds
                             )
-
-
                         }
 
                         Text(

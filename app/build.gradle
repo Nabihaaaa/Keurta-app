@@ -70,7 +70,13 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
+    //lottie
+    implementation "com.airbnb.android:lottie-compose:4.2.0"
 
+    //exoplayer
+    implementation "androidx.media3:media3-exoplayer:1.1.0"
+    implementation "androidx.media3:media3-exoplayer-dash:1.1.0"
+    implementation "androidx.media3:media3-ui:1.1.0"
 
     //viewpage
     implementation 'androidx.compose.foundation:foundation:1.4.3'

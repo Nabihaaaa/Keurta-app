@@ -419,7 +419,8 @@ fun CardItemPortofolioUser(
                                     Image(
                                         painter = rememberAsyncImagePainter(model = userPortofolio.image),
                                         contentDescription = "",
-                                        modifier = Modifier.fillMaxSize()
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.FillBounds
                                     )
                                 } else {
                                     Icon(
@@ -674,7 +675,8 @@ fun CardItemPortofolio(
                                     Image(
                                         painter = rememberAsyncImagePainter(model = userPortofolio.image),
                                         contentDescription = "",
-                                        modifier = Modifier.fillMaxSize()
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.FillBounds
                                     )
                                 } else {
                                     Icon(

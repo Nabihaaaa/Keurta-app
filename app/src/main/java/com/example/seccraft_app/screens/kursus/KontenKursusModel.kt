@@ -1,10 +1,14 @@
 package com.example.seccraft_app.screens.kursus
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.LottieCompositionFactory
+import com.airbnb.lottie.LottieResult
 import com.example.seccraft_app.collection.User.DataUser
 import com.example.seccraft_app.collection.kursus.DataKontenKursus
 import com.example.seccraft_app.collection.kursus.DataKursus
@@ -16,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -32,7 +37,6 @@ class KontenKursusModel(idKursus : String) : ViewModel() {
     }
 
     private fun getDataKursus(id: String) {
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val documentSnapshot = firestore.document("kursus/$id").get().await()
@@ -58,4 +62,5 @@ class KontenKursusModel(idKursus : String) : ViewModel() {
             }
         }
     }
+
 }
