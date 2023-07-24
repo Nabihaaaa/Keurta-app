@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.seccraft_app.screens.kursus.KontenKursusModel
 
-class KursusViewModelFactory(private val idKursus : String) :
+class KursusViewModelFactory(private val idKursus: String) :
     ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = KontenKursusModel(idKursus) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = KontenKursusModel(idKursus) as T
 }

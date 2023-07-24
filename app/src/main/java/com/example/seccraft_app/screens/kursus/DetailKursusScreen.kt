@@ -151,7 +151,7 @@ fun DetailKursusScreen(navController: NavHostController, documentId: String) {
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             Text(
-                                text = stringResource(id = R.string.alat),
+                                text = stringResource(id = R.string.alat_list),
                                 style = MaterialTheme.typography.labelMedium,
                             )
                             val context = LocalContext.current
@@ -186,7 +186,7 @@ fun DetailKursusScreen(navController: NavHostController, documentId: String) {
                                     )
                             }
                             Text(
-                                text = stringResource(id = R.string.bahan),
+                                text = stringResource(id = R.string.bahan_list),
                                 style = MaterialTheme.typography.labelMedium,
                                 modifier = Modifier.padding(top = 16.dp)
                             )

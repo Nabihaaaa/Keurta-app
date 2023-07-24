@@ -19,4 +19,7 @@ sealed class Screens(val route: String){
     object DetailKursus : Screens("kursus_detail_screen/{documentId}")
     object PembayaranKursus : Screens("pembayaran_kursus_screen/{documentId}")
     object KontenKursus : Screens("konten_kursus_screen/{documentId}")
+    object AddKursus : Screens("add_kursus_screen")
+    object KontenScreen : Screens("konten_screen/{documentId}")
+    object EditHalamanUtamaScreen : Screens("edit_halaman_utama_screen/{documentId}")
 }

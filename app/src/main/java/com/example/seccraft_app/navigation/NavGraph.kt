@@ -31,6 +31,9 @@ import com.example.seccraft_app.screens.kursus.DetailKursusScreen
 import com.example.seccraft_app.screens.kursus.KontentKursusScreen
 import com.example.seccraft_app.screens.kursus.KursusScreen
 import com.example.seccraft_app.screens.kursus.PembayaranScreen
+import com.example.seccraft_app.screens.kursus.add.AddKursusScreen
+import com.example.seccraft_app.screens.kursus.add.KontenScreen
+import com.example.seccraft_app.screens.kursus.add.halaman.EditHalamanUtamaScreen
 import com.example.seccraft_app.screens.portofolio.AddPortofolioScreen
 import com.example.seccraft_app.screens.portofolio.DetailPortofolioScreen
 import com.example.seccraft_app.screens.profile.EditProfileScreen
@@ -179,6 +182,15 @@ fun MainNavGraph(
         }
         composable(Screens.KontenKursus.route){
             KontentKursusScreen(navController = navController, it.arguments?.getString("documentId"))
+        }
+        composable(Screens.AddKursus.route){
+            AddKursusScreen(navController = navController)
+        }
+        composable(Screens.KontenScreen.route){
+            KontenScreen(navController=navController, it.arguments?.getString("documentId"))
+        }
+        composable(Screens.EditHalamanUtamaScreen.route){
+            EditHalamanUtamaScreen(navController=navController, it.arguments?.getString("documentId"))
         }
     }
 

@@ -66,8 +66,10 @@
     <!--Kursus Screen String-->
     <string name="langganan">Langganan</string>
     <string name="alat_bahan">Alat dan bahan</string>
-    <string name="alat">Alat:</string>
-    <string name="bahan">Bahan:</string>
+    <string name="alat_list">Alat:</string>
+    <string name="alat">Alat</string>
+    <string name="bahan_list">Bahan:</string>
+    <string name="bahan">Bahan</string>
     <string name="bayar">Bayar</string>
     <string name="promo">Promo</string>
     <string name="metode_pembayaran">Metode Pembayaran</string>
@@ -78,6 +80,7 @@
     <string name="paket_pilih">Paket Yang Dipilih</string>
     <string name="gunakan_cd_prm">Gunakan Kode Promo</string>
     <string name="pilih_mtd">Pilih Metode</string>
+    <string name="level">Level</string>
     <!--Forum Screen String-->
     <string name="forum">Forum</string>
     <string name="cari">Cari</string>
@@ -102,6 +105,15 @@
     <string name="konten">Konten</string>
     <!-- Google String-->
     <string name="default_web_client_id_id">931454459929-b5rqm6sst1la7s5qpthpusqftdqq5clc.apps.googleusercontent.com</string>
+    <string name="link_alat">Link Alat</string>
+    <string name="link_bahan">Link Bahan</string>
+    <string name="harga">Harga</string>
+    <string name="delete_course">Delete Kursus</string>
+    <string name="sudah_publikasi">Anda sudah mempublikasikan kursus ini</string>
+    <string name="konfirmasi_publikasi">Konfirmasi Publikasi</string>
+    <string name="yakin_publikasi">Anda yakin ingin mempublikasikan kursus ini? Kursus yang sudah di publikasi tidak dapat di hapus</string>
+    <string name="konfirmasi_delete">Konfirmasi Delete</string>
+    <string name="yakin_delete">Anda yakin ingin menghapus kursus ini?</string>
 
 
 </resources>

@@ -526,7 +526,7 @@ fun UploadPortofolio(
         val id = db.collection("portofolio").document().id
 
         val storageReference = FirebaseStorage.getInstance().reference
-        val loc = storageReference.child("Portofolio/$id")
+        val loc = storageReference.child("portofolio/$id")
         val uploadTask = loc.putFile(imageUri)
         val timeNow = FieldValue.serverTimestamp()
 

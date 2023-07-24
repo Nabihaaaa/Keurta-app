@@ -2,6 +2,7 @@ package com.example.seccraft_app.screens.kursus
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seccraft_app.collection.User.DataUser
@@ -34,21 +35,63 @@ class DataKursusModel : ViewModel() {
 
     val dataKursus = mutableStateListOf<DataKursus>()
     val dataUserKursus = mutableStateListOf<DataKursus>()
+    val dataKursusPaguyuban = mutableStateListOf<DataKursus>()
+    val user = mutableStateOf(DataUser())
 
     init {
         getDataKursus()
         getDataKursusUser()
+        getUser()
+        getDataKursusPaguyuban()
+    }
+
+    private fun getUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val auth = Firebase.auth
+                val idCurrentUser = auth.currentUser!!.uid
+                val querySnapshot = firestore.document("users/$idCurrentUser").get().await()
+                val data = querySnapshot.toObject(DataUser::class.java)
+
+                user.value = data ?: DataUser()
+            }catch (e:Exception){
+                Log.d("ERRORKENAPA", "getUser: $e")
+            }
+        }
     }
 
     private fun getDataKursus() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val querySnapshot =
-                    firestore.collection("kursus").orderBy("time", Query.Direction.DESCENDING).get()
+                    firestore.collection("kursus")
+                        .orderBy("time", Query.Direction.DESCENDING)
+                        .whereEqualTo("publikasi",true)
+                        .get()
                         .await()
                 val data = querySnapshot.toObjects(DataKursus::class.java)
                 Log.d("dataModel", "KursusScreen: ${data.size}")
                 dataKursus.addAll(data)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+
+    private fun getDataKursusPaguyuban() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val user = Firebase.auth
+                val idUser = user.currentUser!!.uid
+                val querySnapshot =
+                    firestore.collection("kursus")
+                        .orderBy("time",Query.Direction.DESCENDING)
+                        .whereEqualTo("pembuat", idUser)
+                        .get()
+                        .await()
+                val data = querySnapshot.toObjects(DataKursus::class.java)
+                Log.d("dataModel", "KursusScreen: ${data.size}")
+                dataKursusPaguyuban.addAll(data)
             } catch (e: Exception) {
                 // Handle error
             }
@@ -78,6 +121,34 @@ class DataKursusModel : ViewModel() {
                 Log.d("error kenapa", "getDataKursusUser: $e")
             }
         }
+    }
+
+}
+
+suspend fun getPembuat(id:String): String = suspendCoroutine { continuation ->
+
+    val db = FirebaseFirestore.getInstance()
+
+    try {
+        db.document("users/$id")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    val data = snapshot.toObject(DataUser::class.java)
+                    if (data != null) {
+                        continuation.resume(data.name)
+                    } else {
+                        continuation.resumeWithException(IllegalStateException("Failed to retrieve data"))
+                    }
+                } else {
+                    continuation.resumeWithException(NoSuchElementException("Document not found"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                continuation.resumeWithException(exception)
+            }
+    } catch (e: FirebaseFirestoreException) {
+        continuation.resumeWithException(e)
     }
 
 }
@@ -198,9 +269,7 @@ suspend fun getPengikutKursus(id: String): Long = suspendCoroutine { continuatio
 
 suspend fun getAlatDanBahan(id: String, type: String): MutableList<DataAlatdanBahan> =
     suspendCoroutine { continuation ->
-
         val db = FirebaseFirestore.getInstance()
-
         try {
             db.collection("kursus/$id/$type")
                 .get()

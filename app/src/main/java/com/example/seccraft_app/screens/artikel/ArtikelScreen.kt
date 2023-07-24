@@ -28,10 +28,12 @@ import com.example.seccraft_app.collection.artikel.DataArtikel
 import com.example.seccraft_app.R
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.screens.forum.MultiFloatingButton
+import com.example.seccraft_app.screens.kursus.getPembuat
 import com.example.seccraft_app.ui.theme.bg
 import com.example.seccraft_app.ui.theme.icon_faded
 import com.example.seccraft_app.ui.theme.primary
 import com.example.seccraft_app.ui.theme.secondary
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -240,8 +242,19 @@ fun ArtikelScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
 
+                                        val coroutineScope = rememberCoroutineScope()
+                                        var pembuat by remember {
+                                            mutableStateOf("")
+                                        }
+                                        LaunchedEffect(Unit) {
+                                            coroutineScope.launch {
+                                                // Panggil fungsi suspend di sini
+                                                pembuat = getPembuat(dataArtikel.pembuat)
+                                            }
+                                        }
+
                                         Text(
-                                            text = "By ${dataArtikel.pembuat}",
+                                            text = "By $pembuat",
                                             style = MaterialTheme.typography.labelSmall,
 
                                             )

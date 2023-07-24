@@ -10,6 +10,7 @@ data class DataKursus(
     val pengikut : Long = 0,
     val pembuat : String ="",
     val time: Any? = null,
+    val publikasi : Boolean = false
 )
 
 

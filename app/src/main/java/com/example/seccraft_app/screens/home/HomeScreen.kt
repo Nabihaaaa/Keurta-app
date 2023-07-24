@@ -34,6 +34,7 @@ import com.example.seccraft_app.collection.artikel.DataArtikel
 import com.example.seccraft_app.collection.kursus.DataKursus
 import com.example.seccraft_app.collection.portofolio.DataPortofolio
 import com.example.seccraft_app.navigation.Screens
+import com.example.seccraft_app.screens.kursus.getPembuat
 import com.example.seccraft_app.screens.portofolio.CardItemDetail
 import com.example.seccraft_app.screens.portofolio.LikePto
 import com.example.seccraft_app.screens.util.formatHarga
@@ -42,6 +43,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jet.firestore.JetFirestore
 import com.jet.firestore.getListOfObjects
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -208,8 +210,19 @@ fun ArtikelCardItem(artikel: MutableList<DataArtikel>, navController: NavHostCon
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
+                        val coroutineScope = rememberCoroutineScope()
+                        var pembuat by remember {
+                            mutableStateOf("")
+                        }
+                        LaunchedEffect(Unit) {
+                            coroutineScope.launch {
+                                // Panggil fungsi suspend di sini
+                                pembuat = getPembuat(dataArtikel.pembuat)
+                            }
+                        }
+
                         Text(
-                            text = "By ${dataArtikel.pembuat}",
+                            text = "By $pembuat",
                             style = MaterialTheme.typography.labelSmall,
 
                             )
@@ -504,8 +517,18 @@ fun KursusCardItem(kursus: MutableList<DataKursus>, navController: NavHostContro
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(top = 8.dp)
                     )
+                    val coroutineScope = rememberCoroutineScope()
+                    var pembuat by remember {
+                        mutableStateOf("")
+                    }
+                    LaunchedEffect(Unit) {
+                        coroutineScope.launch {
+                            // Panggil fungsi suspend di sini
+                            pembuat = getPembuat(dataKursus.pembuat)
+                        }
+                    }
                     Text(
-                        text = "By ${dataKursus.pembuat}",
+                        text = "By $pembuat",
                         style = MaterialTheme.typography.labelSmall,
                         textAlign = TextAlign.End,
                         modifier = Modifier
