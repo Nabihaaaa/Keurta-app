@@ -56,7 +56,7 @@ fun ProfileScreen(
                     ) {
                         UserData(navController, getData)
                         //Fiture(navController)
-                        Akun(navController, signOutGoogle)
+                        Akun(navController, signOutGoogle, getData)
                         InfoLanjutan()
                     }
 
@@ -184,7 +184,7 @@ fun InfoLanjutan() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Akun(navController: NavHostController, signOutGoogle: () -> Unit) {
+fun Akun(navController: NavHostController, signOutGoogle: () -> Unit, getData: DataUser) {
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(Color.White),
@@ -259,6 +259,34 @@ fun Akun(navController: NavHostController, signOutGoogle: () -> Unit) {
                 )
             }
             Divider(color = gray_DAA, thickness = 1.dp)
+
+            if (getData.role == "admin"){
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(top = 12.dp, bottom = 16.dp)
+                ) {
+                    Image(painter = painterResource(id = R.drawable.icn_admin), contentDescription = "")
+                    Text(
+                        text = stringResource(id = R.string.admin),
+                        fontFamily = PoppinsFamily,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = black_25,
+                        modifier = Modifier.padding(start = 4.dp),
+                        style = LocalTextStyle.current.copy(
+                            platformStyle = PlatformTextStyle(includeFontPadding = false)
+                        )
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Image(
+                        painter = painterResource(id = R.drawable.arrow_right),
+                        contentDescription = ""
+                    )
+                }
+                Divider(color = gray_DAA, thickness = 1.dp)
+            }
 
             Row(
                 Modifier

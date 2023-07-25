@@ -90,7 +90,10 @@ fun HomeScreen(navController: NavHostController, dataHomeModel: DataHomeModel = 
                         }
 
                     }
-                    KursusCardItem(kursus, navController)
+
+                    if (user.role == "user"){
+                        KursusCardItem(kursus, navController)
+                    }
                     PortofolioCardItem(portofolio, navController)
                     ArtikelCardItem(artikel, navController)
                 }

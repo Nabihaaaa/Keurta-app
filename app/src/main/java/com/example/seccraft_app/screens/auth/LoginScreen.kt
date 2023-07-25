@@ -125,31 +125,57 @@ private fun Login(
 
 @Composable
 fun TextAkun(navController: NavHostController) {
-    Row(
+    Column(
         modifier = Modifier
             .padding(top = 48.dp, bottom = 100.dp)
-            .fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row {
+            Text(
+                text = stringResource(id = R.string.belum_akun),
+                fontFamily = PoppinsFamily,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = gray_88
+            )
+            ClickableText(
+                text = AnnotatedString(stringResource(id = R.string.daftar)),
+                modifier = Modifier.padding(start = 8.dp),
+                style = TextStyle(
+                    fontFamily = PoppinsFamily,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = gray_88
+                ),
+                onClick = {
+                    navController.navigate(Screens.Register.route)
+                }
+            )
+        }
         Text(
-            text = stringResource(id = R.string.belum_akun),
+            text = stringResource(id = R.string.atauu),
             fontFamily = PoppinsFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = gray_88
+            color = gray_88,
+            modifier = Modifier.padding(vertical = 12.dp)
         )
-        ClickableText(
-            text = AnnotatedString(stringResource(id = R.string.daftar)),
-            modifier = Modifier.padding(start = 8.dp),
-            style = TextStyle(
-                fontFamily = PoppinsFamily,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = gray_88
-            ),
-            onClick = {
-                navController.navigate(Screens.Register.route)
-            }
-        )
+        Row {
+            ClickableText(
+                text = AnnotatedString(stringResource(id = R.string.daftar_paguyuban)),
+                modifier = Modifier.padding(start = 8.dp),
+                style = TextStyle(
+                    fontFamily = PoppinsFamily,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = gray_88
+                ),
+                onClick = {
+
+                }
+            )
+        }
+
 
 
     }

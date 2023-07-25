@@ -247,13 +247,27 @@ fun BottomKursusDetail(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.padding(vertical = 16.dp),
             ) {
-                Text(
-                    text = "Anda sudah membeli kursus ini",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(10.dp)
-                )
+                Button(
+                    onClick = {
+                        navController.navigate("konten_kursus_screen/${kursus.id}")
+                    },
+                    contentPadding = PaddingValues(0.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        secondary
+                    ),
+                    shape = RoundedCornerShape(15.dp)
+                ) {
+
+                    Text(
+                        text = stringResource(id = R.string.mulai_kursus),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(10.dp)
+                    )
+
+                }
+
             }
 
         } else {

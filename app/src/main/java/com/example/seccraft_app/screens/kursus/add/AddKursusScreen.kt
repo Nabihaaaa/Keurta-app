@@ -53,8 +53,6 @@ fun AddKursusScreen(navController: NavHostController) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
 
-    Log.d("imageUri", "AddKursusScreen: ${imageUri.toString()}")
-
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageUri = uri
@@ -143,7 +141,7 @@ fun AddKursusScreen(navController: NavHostController) {
                                     modifier = Modifier
                                         .size(32.dp)
                                         .clickable {
-
+                                            navController.popBackStack()
                                         }
                                 )
                                 Text(
@@ -452,37 +450,50 @@ fun AddKursusScreen(navController: NavHostController) {
                             }
 
                             listAlat.forEachIndexed { idx, it ->
-                                LinkText(
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    linkTextData = listOf(
-                                        LinkTextData(
-                                            text = "  ${idx + 1}. ${it.nama} "
-                                        ),
-                                        LinkTextData(
-                                            text = "(Link)",
-                                            tag = "link_olshop",
-                                            annotation = it.link,
-                                            onClick = { uri ->
-                                                if (uri.item != "") {
-                                                    val openURL = Intent(Intent.ACTION_VIEW)
-                                                    openURL.data = Uri.parse(uri.item)
-                                                    ContextCompat.startActivity(
-                                                        context,
-                                                        openURL,
-                                                        null
-                                                    )
-                                                } else {
-                                                    Toast.makeText(
-                                                        context,
-                                                        "tidak memiliki link",
-                                                        Toast.LENGTH_LONG
-                                                    ).show()
-                                                }
+                                Row {
+                                    LinkText(
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        linkTextData = listOf(
+                                            LinkTextData(
+                                                text = "  ${idx + 1}. ${it.nama} "
+                                            ),
+                                            LinkTextData(
+                                                text = "(Link)",
+                                                tag = "link_olshop",
+                                                annotation = it.link,
+                                                onClick = { uri ->
+                                                    if (uri.item != "") {
+                                                        val openURL = Intent(Intent.ACTION_VIEW)
+                                                        openURL.data = Uri.parse(uri.item)
+                                                        ContextCompat.startActivity(
+                                                            context,
+                                                            openURL,
+                                                            null
+                                                        )
+                                                    } else {
+                                                        Toast.makeText(
+                                                            context,
+                                                            "tidak memiliki link",
+                                                            Toast.LENGTH_LONG
+                                                        ).show()
+                                                    }
 
+                                                }
+                                            )
+                                        ),
+                                    )
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.close),
+                                        contentDescription = "",
+                                        tint = Color.Red,
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .size(16.dp)
+                                            .clickable {
+                                                listAlat.removeAt(idx)
                                             }
-                                        )
-                                    ),
-                                )
+                                    )
+                                }
                             }
 
                             //bahan
@@ -587,37 +598,47 @@ fun AddKursusScreen(navController: NavHostController) {
                             }
 
                             listBahan.forEachIndexed { idx, it ->
-                                LinkText(
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    linkTextData = listOf(
-                                        LinkTextData(
-                                            text = "  ${idx + 1}. ${it.nama} "
-                                        ),
-                                        LinkTextData(
-                                            text = "(Link)",
-                                            tag = "link_olshop",
-                                            annotation = it.link,
-                                            onClick = { uri ->
-                                                if (uri.item != "") {
-                                                    val openURL = Intent(Intent.ACTION_VIEW)
-                                                    openURL.data = Uri.parse(uri.item)
-                                                    ContextCompat.startActivity(
-                                                        context,
-                                                        openURL,
-                                                        null
-                                                    )
-                                                } else {
-                                                    Toast.makeText(
-                                                        context,
-                                                        "tidak memiliki link",
-                                                        Toast.LENGTH_LONG
-                                                    ).show()
-                                                }
+                                Row {
+                                    LinkText(
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        linkTextData = listOf(
+                                            LinkTextData(
+                                                text = "  ${idx + 1}. ${it.nama} "
+                                            ),
+                                            LinkTextData(
+                                                text = "(Link)",
+                                                tag = "link_olshop",
+                                                annotation = it.link,
+                                                onClick = { uri ->
+                                                    if (uri.item != "") {
+                                                        val openURL = Intent(Intent.ACTION_VIEW)
+                                                        openURL.data = Uri.parse(uri.item)
+                                                        ContextCompat.startActivity(
+                                                            context,
+                                                            openURL,
+                                                            null
+                                                        )
+                                                    } else {
+                                                        Toast.makeText(
+                                                            context,
+                                                            "tidak memiliki link",
+                                                            Toast.LENGTH_LONG
+                                                        ).show()
+                                                    }
 
-                                            }
-                                        )
-                                    ),
-                                )
+                                                }
+                                            )
+                                        ),
+                                    )
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.close),
+                                        contentDescription = "",
+                                        tint = Color.Red,
+                                        modifier = Modifier.padding(start = 8.dp).size(16.dp).clickable {
+                                            listBahan.removeAt(idx)
+                                        }
+                                    )
+                                }
                             }
                         }
 

@@ -156,47 +156,49 @@ fun KontentKursusScreen(
                 }
                 item {
                     //bottom
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 32.dp)
-                            .padding(bottom = 60.dp)
-                    ) {
-                        if (pagerState.currentPage != 0) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.arrow_course),
-                                contentDescription = "",
-                                tint = secondary,
-                                modifier = Modifier.clickable {
-                                    val prevPageIndex = pagerState.currentPage - 1
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(
-                                            prevPageIndex
-                                        )
-                                    }
-                                }
-                            )
-                        }
-                        if (pagerState.currentPage != dataKonten.size - 1) {
-                            Spacer(modifier = Modifier.weight(1f))
-                            Icon(
-                                painter = painterResource(id = R.drawable.arrow_course),
-                                contentDescription = "",
-                                tint = secondary,
-                                modifier = Modifier
-                                    .rotate(180f)
-                                    .clickable {
-                                        val nextPageIndex = pagerState.currentPage + 1
+                    if (dataKonten.size != 0){
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 32.dp)
+                                .padding(bottom = 60.dp)
+                        ) {
+                            if (pagerState.currentPage != 0) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.arrow_course),
+                                    contentDescription = "",
+                                    tint = secondary,
+                                    modifier = Modifier.clickable {
+                                        val prevPageIndex = pagerState.currentPage - 1
                                         coroutineScope.launch {
                                             pagerState.animateScrollToPage(
-                                                nextPageIndex
+                                                prevPageIndex
                                             )
                                         }
                                     }
-                            )
+                                )
+                            }
+                            if (pagerState.currentPage != dataKonten.size - 1) {
+                                Spacer(modifier = Modifier.weight(1f))
+                                Icon(
+                                    painter = painterResource(id = R.drawable.arrow_course),
+                                    contentDescription = "",
+                                    tint = secondary,
+                                    modifier = Modifier
+                                        .rotate(180f)
+                                        .clickable {
+                                            val nextPageIndex = pagerState.currentPage + 1
+                                            coroutineScope.launch {
+                                                pagerState.animateScrollToPage(
+                                                    nextPageIndex
+                                                )
+                                            }
+                                        }
+                                )
+                            }
+
+
                         }
-
-
                     }
 
                 }

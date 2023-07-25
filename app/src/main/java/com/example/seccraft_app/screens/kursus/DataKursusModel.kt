@@ -19,6 +19,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CompletableDeferred
@@ -198,7 +199,14 @@ suspend fun userKursusCheck(idKursus: String): Boolean = suspendCoroutine { cont
                 continuation.resume(true)
             }
             else {
-                continuation.resume(false)
+                db.document("users/$idUser").get().addOnSuccessListener { userSnap->
+                     val currentUser = userSnap.toObject(DataUser::class.java)
+                    if (currentUser!!.role == "admin" || currentUser.role == "paguyuban"){
+                        continuation.resume(true)
+                    }else{
+                        continuation.resume(false)
+                    }
+                }
             }
         }
 

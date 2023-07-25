@@ -111,9 +111,21 @@
     <string name="delete_course">Delete Kursus</string>
     <string name="sudah_publikasi">Anda sudah mempublikasikan kursus ini</string>
     <string name="konfirmasi_publikasi">Konfirmasi Publikasi</string>
-    <string name="yakin_publikasi">Anda yakin ingin mempublikasikan kursus ini? Kursus yang sudah di publikasi tidak dapat di hapus</string>
+    <string name="yakin_publikasi">Anda yakin ingin mempublikasikan kursus ini? Kursus yang sudah di publikasi tidak dapat di hapus maupun di edit</string>
     <string name="konfirmasi_delete">Konfirmasi Delete</string>
     <string name="yakin_delete">Anda yakin ingin menghapus kursus ini?</string>
+    <string name="upload_mtr_krs">Upload Materi Kursus</string>
+    <string name="upl_video_animasi">Upload Video/Animasi</string>
+    <string name="data_berhasil_simpan">Data berasil disimpan</string>
+    <string name="data_blm_lengkap">Mohon isi seluruh data</string>
+    <string name="yakin_delete_konten">Apakah anda yakin ingin menghapus konten ini?</string>
+    <string name="mulai_kursus">Mulai Kursus</string>
+    <string name="edit">Edit</string>
+    <string name="total_penghasilan">Total Penghasilan Kursus</string>
+    <string name="jml_pembeli">Jumlah Pembeli</string>
+    <string name="admin">Admin</string>
+    <string name="atauu">Atau</string>
+    <string name="daftar_paguyuban">Daftar sebagai paguyuban</string>
 
 
 </resources>

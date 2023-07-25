@@ -60,7 +60,8 @@ fun EditProfileScreen(navController: NavHostController) {
             val number = value?.getString("number").toString()
             val email = value?.getString("email").toString()
             val image = value?.getString("image").toString()
-            user = user.copy(name = name, number = number, email = email, image = image)
+            val role = value?.getString("role").toString()
+            user = user.copy(name = name, number = number, email = email, image = image, role = role)
         }
     ) {
         Column(
