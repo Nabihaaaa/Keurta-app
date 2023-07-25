@@ -1,1 +1,24 @@
-/build
+# Android build/gradle files
+build/
+*.iml
+.gradle/
+local.properties
+
+# Firebase google-services.json (sensitive)
+google-services.json
+
+# Keystore files
+*.jks
+*.jks.properties
+
+# User-specific Android Studio settings
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/.name
+.idea/caches/
+.idea/modules.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# User-specific Gradle settings
+app/build/
