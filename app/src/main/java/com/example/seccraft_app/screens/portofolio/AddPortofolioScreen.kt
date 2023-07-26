@@ -2,7 +2,6 @@ package com.example.seccraft_app.screens.portofolio
 
 import android.content.Context
 import android.net.Uri
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,24 +36,17 @@ import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.seccraft_app.collection.User.DataUserKursus
-import com.example.seccraft_app.collection.kursus.DataAlatdanBahan
 import com.example.seccraft_app.collection.kursus.DataKursus
 import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.collection.portofolio.DataPortofolio
 import com.example.seccraft_app.navigation.Screens
-import com.example.seccraft_app.screens.kursus.getAlatDanBahan
 import com.example.seccraft_app.screens.kursus.getDataKursusUser
-import com.example.seccraft_app.screens.kursus.getKursusWithId
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.jet.firestore.JetFirestore
-import com.jet.firestore.getListOfObjects
-import com.jet.firestore.getObject
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

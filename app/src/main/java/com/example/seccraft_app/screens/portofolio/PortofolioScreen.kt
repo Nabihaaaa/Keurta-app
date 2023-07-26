@@ -3,7 +3,6 @@ package com.example.seccraft_app.screens.portofolio
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -30,10 +29,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.BottomBarScreen
-import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.user.DataUser
 import com.example.seccraft_app.collection.portofolio.DataPortofolio
 import com.example.seccraft_app.collection.portofolio.LikePortofolio
-import com.example.seccraft_app.collection.User.UserLikePortofolio
+import com.example.seccraft_app.collection.user.UserLikePortofolio
 import com.example.seccraft_app.R
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.ui.theme.*

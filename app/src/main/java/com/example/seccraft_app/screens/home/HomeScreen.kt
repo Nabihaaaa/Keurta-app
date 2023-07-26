@@ -29,13 +29,12 @@ import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.collection.portofolio.LikePortofolio
 import com.example.seccraft_app.R
-import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.user.DataUser
 import com.example.seccraft_app.collection.artikel.DataArtikel
 import com.example.seccraft_app.collection.kursus.DataKursus
 import com.example.seccraft_app.collection.portofolio.DataPortofolio
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.screens.kursus.getPembuat
-import com.example.seccraft_app.screens.portofolio.CardItemDetail
 import com.example.seccraft_app.screens.portofolio.LikePto
 import com.example.seccraft_app.screens.util.formatHarga
 import com.example.seccraft_app.ui.theme.*

@@ -34,14 +34,12 @@ import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
-import com.example.seccraft_app.collection.User.DataRegistrasiPaguyuban
-import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.user.DataRegistrasiPaguyuban
 import com.example.seccraft_app.googleSignIn.SignInState
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 private lateinit var auth: FirebaseAuth

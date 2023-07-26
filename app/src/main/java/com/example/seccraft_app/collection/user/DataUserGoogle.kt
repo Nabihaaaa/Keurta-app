@@ -1,6 +1,7 @@
-package com.example.seccraft_app.collection.User
+package com.example.seccraft_app.collection.user
 
-data class DataUser(
+data class DataUserGoogle(
+    val id : String = "",
     var image: String = "",
     var name: String = "",
     var email: String = "",

@@ -28,7 +28,7 @@ import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.collection.forum.ForumCollection
 import com.example.seccraft_app.collection.forum.ReplyForum
-import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.user.DataUser
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.firestore.Query

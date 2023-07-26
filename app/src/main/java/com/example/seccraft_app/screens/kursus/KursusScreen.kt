@@ -37,7 +37,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KursusScreen(dataKursusModel: DataKursusModel = viewModel(), navController: NavHostController) {
     Accompanist().TopBar(color = primary)

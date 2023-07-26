@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.user.DataUser
 import com.example.seccraft_app.collection.artikel.DataArtikel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore

@@ -23,7 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.screens.util.Accompanist
-import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.user.DataUser
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
 import com.example.seccraft_app.ui.theme.*
@@ -265,7 +265,9 @@ fun Akun(navController: NavHostController, signOutGoogle: () -> Unit, getData: D
                     Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(top = 12.dp, bottom = 16.dp)
+                        .padding(top = 12.dp, bottom = 16.dp).clickable {
+                            navController.navigate(Screens.AdminScreen.route)
+                        }
                 ) {
                     Image(painter = painterResource(id = R.drawable.icn_admin), contentDescription = "")
                     Text(

@@ -47,14 +47,14 @@ fun TextFieldRegPag(
         mutableStateOf(false)
     }
 
-    if (type=="password"){
+    if (type=="password" && text != ""){
         val charMin = 6
         password = true
         isError = text.length < charMin
         errorMessage = "Password minimal 6 karakter"
     }
 
-    if (type=="email"){
+    if (type=="email" && text!=""){
         isError = !isEmailValid(text)
         errorMessage = "email tidak valid"
     }
@@ -137,7 +137,6 @@ fun TextFieldRegPag(
                 fontFamily = PoppinsFamily,
                 fontSize = 8.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier.padding(start = 16.dp)
             )
         }
         value(text)

@@ -25,4 +25,6 @@ sealed class Screens(val route: String){
     object AddKontenScreen : Screens("add_konten_screen/{documentId}/{page}")
     object EditKontenScreen : Screens("edit_konten_screen/{documentId}/{kontenId}")
     object RegistrasiPaguyuban : Screens("registrasi_paguyuban_screen")
+    object AdminScreen : Screens("admin_screen")
+    object DetailPaguyubanScreen : Screens("detail_paguyuban_screen/{documentId}")
 }

@@ -20,6 +20,8 @@ import com.example.seccraft_app.googleSignIn.LocalGoogleAuthUiClient
 import com.example.seccraft_app.screens.home.HomeScreen
 import com.example.seccraft_app.screens.portofolio.PortofolioScreen
 import com.example.seccraft_app.screens.SplashScreen
+import com.example.seccraft_app.screens.admin.AdminScreen
+import com.example.seccraft_app.screens.admin.detail.DetailPaguyubanScreen
 import com.example.seccraft_app.screens.aktivitas.AktivitasScreen
 import com.example.seccraft_app.screens.artikel.AddArtikelSceen
 import com.example.seccraft_app.screens.artikel.ArtikelScreen
@@ -205,6 +207,12 @@ fun MainNavGraph(
         }
         composable(Screens.RegistrasiPaguyuban.route){
             RegistrasiPaguyubanScreen(navController = navController)
+        }
+        composable(Screens.AdminScreen.route){
+            AdminScreen(navController = navController)
+        }
+        composable(Screens.DetailPaguyubanScreen.route){
+            DetailPaguyubanScreen(navController = navController, id = it.arguments?.getString("documentId")!!)
         }
     }
 

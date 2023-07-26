@@ -140,6 +140,11 @@
     <string name="deskripsi_registrasi_paguyuban">Data yang dikirim akan diperiksa segera oleh admin. Apabila data sudah di approved informasi akan dikirimkan melalui email paguyuban. Anda yakin ingin bermitra bersama kami?</string>
     <string name="akun_blm_apr">Akun paguyuban anda belum diapproved</string>
     <string name="register_sc_pag">Register Berhasil! mohon tunggiu sampai data anda di approve</string>
+    <string name="photo_pag">Photo Profile Paguyuban (.png, .jpeg)</string>
+    <string name="surat_izinn">Surat Izin</string>
+    <string name="approve">Approve</string>
+    <string name="delete">Delete</string>
+    <string name="bukti_lain">Bukti Lainnya</string>
 
 
 </resources>

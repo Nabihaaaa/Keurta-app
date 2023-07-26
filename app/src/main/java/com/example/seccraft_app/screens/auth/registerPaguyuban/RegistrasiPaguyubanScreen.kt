@@ -64,6 +64,9 @@ fun RegistrasiPaguyubanScreen(
     var deskripsi by remember {
         mutableStateOf("")
     }
+    var image by remember {
+        mutableStateOf<Uri?>(null)
+    }
     var suratIzin by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -83,13 +86,16 @@ fun RegistrasiPaguyubanScreen(
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             buktiLain = uri
         }
-
+    val launcherImage =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            image = uri
+        }
 
 
     if (showDialog) {
         if (nama != "" && email != "" && password != ""
             && nomor != "" && alamat != "" && deskripsi != ""
-            && suratIzin != null && password.length >= 6 && isEmailValid(email)
+            && suratIzin != null && password.length >= 6 && isEmailValid(email) && image != null
         ) {
             UploadAlert(
                 nama,
@@ -102,7 +108,8 @@ fun RegistrasiPaguyubanScreen(
                 buktiLain,
                 navController,
                 registrasiPaguyubanModel,
-                context
+                context,
+                image!!
             ) {
                 showDialog = it
             }
@@ -197,6 +204,53 @@ fun RegistrasiPaguyubanScreen(
                                 singleLine = false
                             ) {
                                 deskripsi = it
+                            }
+                            //Photo Profile
+                            Text(
+                                text = stringResource(id = R.string.photo_pag),
+                                fontFamily = PoppinsFamily,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight(600),
+                                color = gray_88,
+                                modifier = Modifier.padding(top = 16.dp)
+                            )
+                            if (image != null) {
+                                Card(modifier = Modifier
+                                    .size(160.dp)
+                                    .padding(vertical = 8.dp)) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(model = image),
+                                        contentDescription = "",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.FillBounds
+                                    )
+                                }
+                            }
+                            OutlinedButton(
+                                onClick = { launcherImage.launch("image/*") },
+                                border = BorderStroke(1.dp, gray_88),
+                                contentPadding = PaddingValues(0.dp),
+                                colors = ButtonDefaults.buttonColors(Color.Transparent),
+                                shape = RoundedCornerShape(size = 6.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.icon__data_transfer),
+                                        contentDescription = "",
+                                        modifier = Modifier.padding(end = 12.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.upl_file),
+                                        fontFamily = PoppinsFamily,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight(600),
+                                        color = gray_88,
+                                    )
+
+                                }
                             }
                             //surat izin
                             Text(
@@ -386,6 +440,7 @@ fun UploadAlert(
     navController: NavHostController,
     registrasiPaguyubanModel: RegistrasiPaguyubanModel,
     context : Context,
+    image : Uri,
     showDialog: (Boolean) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -417,7 +472,8 @@ fun UploadAlert(
                             suratIzin,
                             buktiLain,
                             navController,
-                            context
+                            context,
+                            image
                         )
 
                     }

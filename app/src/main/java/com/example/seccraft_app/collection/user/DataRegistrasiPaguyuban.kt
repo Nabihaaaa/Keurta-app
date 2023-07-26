@@ -1,6 +1,4 @@
-package com.example.seccraft_app.collection.User
-
-import android.net.Uri
+package com.example.seccraft_app.collection.user
 
 data class DataRegistrasiPaguyuban(
     val id:String = "",
@@ -11,4 +9,5 @@ data class DataRegistrasiPaguyuban(
     val deskripsi: String = "",
     val suratIzin: String = "",
     val buktiLain: String = "",
+    val image : String = ""
 )

@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seccraft_app.collection.User.UserLikeArtikel
+import com.example.seccraft_app.collection.user.UserLikeArtikel
 import com.example.seccraft_app.collection.portofolio.DataPortofolio
-import com.example.seccraft_app.collection.User.UserLikePortofolio
+import com.example.seccraft_app.collection.user.UserLikePortofolio
 import com.example.seccraft_app.collection.artikel.DataArtikel
 import com.example.seccraft_app.collection.forum.ForumCollection
 import com.example.seccraft_app.collection.forum.ForumUser

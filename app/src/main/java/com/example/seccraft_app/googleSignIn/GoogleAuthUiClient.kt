@@ -5,8 +5,8 @@ import android.content.Intent
 import android.content.IntentSender
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.example.seccraft_app.R
-import com.example.seccraft_app.collection.User.DataUser
-import com.example.seccraft_app.collection.User.DataUserGoogle
+import com.example.seccraft_app.collection.user.DataUser
+import com.example.seccraft_app.collection.user.DataUserGoogle
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient

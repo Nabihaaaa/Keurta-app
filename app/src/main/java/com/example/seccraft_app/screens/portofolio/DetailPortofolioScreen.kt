@@ -23,7 +23,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.R
 import com.example.seccraft_app.screens.util.Accompanist
-import com.example.seccraft_app.collection.User.DataUser
+import com.example.seccraft_app.collection.user.DataUser
 import com.example.seccraft_app.collection.kursus.DataKursus
 import com.example.seccraft_app.collection.portofolio.DataPortofolio
 import com.example.seccraft_app.collection.portofolio.LikePortofolio

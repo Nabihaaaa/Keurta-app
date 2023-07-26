@@ -5,13 +5,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seccraft_app.collection.User.DataUser
-import com.example.seccraft_app.collection.User.DataUserKursus
-import com.example.seccraft_app.collection.User.UserLikePortofolio
-import com.example.seccraft_app.collection.artikel.DataArtikel
+import com.example.seccraft_app.collection.user.DataUser
+import com.example.seccraft_app.collection.user.DataUserKursus
 import com.example.seccraft_app.collection.kursus.DataAlatdanBahan
 import com.example.seccraft_app.collection.kursus.DataKursus
-import com.example.seccraft_app.collection.portofolio.DataPortofolio
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.ktx.auth
@@ -19,10 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
