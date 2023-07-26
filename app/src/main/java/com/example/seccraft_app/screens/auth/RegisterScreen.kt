@@ -296,8 +296,6 @@ fun BelumAkun(navController: NavHostController) {
                 navController.navigate(Screens.Login.route)
             }
         )
-
-
     }
 }
 
@@ -306,6 +304,7 @@ fun BtnDaftar(navController: NavHostController) {
     val context = LocalContext.current
     Button(
         onClick = {
+            if (email!=""&& password !=""&& name!=""&& number!="")
             RegisterAkun(email, password, name, number, navController, context)
         },
         modifier = Modifier

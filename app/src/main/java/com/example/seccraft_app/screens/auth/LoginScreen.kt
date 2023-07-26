@@ -34,11 +34,13 @@ import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.R
+import com.example.seccraft_app.collection.User.DataRegistrasiPaguyuban
 import com.example.seccraft_app.collection.User.DataUser
 import com.example.seccraft_app.googleSignIn.SignInState
 import com.example.seccraft_app.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -107,18 +109,34 @@ private fun Login(
     context: Context
 ) {
     auth = Firebase.auth
-    if (email == "" && password == "") {
-        Toast.makeText(context, R.string.empty, Toast.LENGTH_LONG).show()
-    } else {
+    val db = FirebaseFirestore.getInstance()
+    if (email != "" && password != "") {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener() { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(context, R.string.login_sc, Toast.LENGTH_LONG).show()
-                    navController.navigate(BottomBarScreen.Beranda.route)
+                    val idPaguyuban = auth.currentUser?.uid
+                    if (idPaguyuban != null) {
+                        db.collection("dataRegistrasiPaguyuban").document(idPaguyuban)
+                            .get()
+                            .addOnSuccessListener { document->
+                                val id = document.toObject(DataRegistrasiPaguyuban::class.java)?.id
+                                Log.d("isi ID", "Login: $id")
+                                if (id == null){
+                                    Toast.makeText(context, R.string.login_sc, Toast.LENGTH_LONG).show()
+                                    navController.navigate(BottomBarScreen.Beranda.route)
+                                }else{
+                                    Toast.makeText(context, R.string.akun_blm_apr, Toast.LENGTH_LONG).show()
+                                    auth.signOut()
+                                }
+                            }
+                    }
+
                 } else {
                     Toast.makeText(context, R.string.login_fail, Toast.LENGTH_LONG).show()
                 }
             }
+    } else {
+        Toast.makeText(context, R.string.empty, Toast.LENGTH_LONG).show()
     }
 }
 
@@ -152,30 +170,21 @@ fun TextAkun(navController: NavHostController) {
                 }
             )
         }
-        Text(
-            text = stringResource(id = R.string.atauu),
-            fontFamily = PoppinsFamily,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = gray_88,
-            modifier = Modifier.padding(vertical = 12.dp)
+
+
+        ClickableText(
+            text = AnnotatedString(stringResource(id = R.string.daftar_paguyuban)),
+            modifier = Modifier.padding(top = 28.dp),
+            style = TextStyle(
+                fontFamily = PoppinsFamily,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = gray_88
+            ),
+            onClick = {
+                navController.navigate(Screens.RegistrasiPaguyuban.route)
+            }
         )
-        Row {
-            ClickableText(
-                text = AnnotatedString(stringResource(id = R.string.daftar_paguyuban)),
-                modifier = Modifier.padding(start = 8.dp),
-                style = TextStyle(
-                    fontFamily = PoppinsFamily,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = gray_88
-                ),
-                onClick = {
-
-                }
-            )
-        }
-
 
 
     }

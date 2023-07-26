@@ -43,9 +43,6 @@ class EditKontenModel() : ViewModel() {
         animasiKonten: String,
         videoKonten: String
     ) {
-        Log.d("ISI fileuri", "uploadData: $fileUri")
-        Log.d("ISI animasi", "uploadData: $animasiKonten")
-        Log.d("ISI video", "uploadData: $videoKonten")
 
         if (fileUri.toString() == animasiKonten && videoKonten == "") {
             val data = DataKontenKursus(

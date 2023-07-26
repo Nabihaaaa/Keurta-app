@@ -26,6 +26,7 @@ import com.example.seccraft_app.screens.artikel.ArtikelScreen
 import com.example.seccraft_app.screens.artikel.DetailArtikelScreen
 import com.example.seccraft_app.screens.auth.LoginScreen
 import com.example.seccraft_app.screens.auth.RegisterScreen
+import com.example.seccraft_app.screens.auth.registerPaguyuban.RegistrasiPaguyubanScreen
 import com.example.seccraft_app.screens.forum.*
 import com.example.seccraft_app.screens.kursus.DetailKursusScreen
 import com.example.seccraft_app.screens.kursus.KontentKursusScreen
@@ -138,7 +139,6 @@ fun MainNavGraph(
         }
         composable(route = BottomBarScreen.Kursus.route){
             KursusScreen(navController = navController)
-
         }
         composable(Screens.Portofolio.route){
             PortofolioScreen(navController)
@@ -202,6 +202,9 @@ fun MainNavGraph(
                 idKursus = it.arguments?.getString("documentId")!!,
                 idKonten = it.arguments?.getString("kontenId")!!
             )
+        }
+        composable(Screens.RegistrasiPaguyuban.route){
+            RegistrasiPaguyubanScreen(navController = navController)
         }
     }
 

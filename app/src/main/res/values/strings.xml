@@ -27,6 +27,7 @@
     <string name="empty">email or password is empty</string>
     <!-- Register Screen String -->
     <string name="daftar_desc">Isi data diri kamu untuk bergabung bersama kami</string>
+    <string name="daftar_desc_pag">Isi data daru paguyuban anda untuk bermitra bersama kami</string>
     <string name="nama">Nama</string>
     <string name="telp">Nomor Telepon</string>
     <string name="syarat">Dengan mendaftar, kamu menyetujui syarat dan ketentuan yang berlaku</string>
@@ -125,7 +126,20 @@
     <string name="jml_pembeli">Jumlah Pembeli</string>
     <string name="admin">Admin</string>
     <string name="atauu">Atau</string>
-    <string name="daftar_paguyuban">Daftar sebagai paguyuban</string>
+    <string name="daftar_paguyuban">Daftar Mitra paguyuban</string>
+    <string name="nama_pag">Nama Paguyuban</string>
+    <string name="email_pag">Email Paguyuban</string>
+    <string name="nomor_pag">Nomor Telepon Paguyuban</string>
+    <string name="alamat_pag">Alamat Paguyuban</string>
+    <string name="deskripsi_pag">Deskripsi Paguyuban</string>
+    <string name="password_pag">Password</string>
+    <string name="surat_izin">Bukti Surat Izin Usaha (.png, .jpeg)</string>
+    <string name="bukti_tambahan">Bukti Tambahan (.zip)</string>
+    <string name="upl_file">Upload file</string>
+    <string name="konfirmasi_registrasi">Konfirmasi Registrasi</string>
+    <string name="deskripsi_registrasi_paguyuban">Data yang dikirim akan diperiksa segera oleh admin. Apabila data sudah di approved informasi akan dikirimkan melalui email paguyuban. Anda yakin ingin bermitra bersama kami?</string>
+    <string name="akun_blm_apr">Akun paguyuban anda belum diapproved</string>
+    <string name="register_sc_pag">Register Berhasil! mohon tunggiu sampai data anda di approve</string>
 
 
 </resources>
