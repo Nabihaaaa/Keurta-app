@@ -61,7 +61,9 @@ class RegistrasiPaguyubanModel : ViewModel() {
                 firestore.collection("users").document(id).set(dataUser).await()
                 firestore.collection("dataRegistrasiPaguyuban").document(id).set(dataReg).await()
                 Toast.makeText(context, R.string.register_sc_pag, Toast.LENGTH_LONG).show()
+                auth.signOut()
                 navController.navigate(Screens.Login.route)
+
             } else {
                 Toast.makeText(context, R.string.register_fail, Toast.LENGTH_LONG).show()
             }

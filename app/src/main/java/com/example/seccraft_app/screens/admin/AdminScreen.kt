@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -23,8 +24,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.example.seccraft_app.BottomBarScreen
 import com.example.seccraft_app.R
 import com.example.seccraft_app.collection.user.DataRegistrasiPaguyuban
+import com.example.seccraft_app.navigation.Screens
 import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.ui.theme.*
 
@@ -47,7 +50,7 @@ fun AdminScreen(navController: NavHostController, dataAdminModel: DataAdminModel
 
     ) {
         Column {
-            TopAdmin()
+            TopAdmin(navController)
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 LazyColumn(
                     contentPadding = PaddingValues(top = 48.dp),
@@ -122,7 +125,7 @@ fun CardPaguyuban(paguyuban: DataRegistrasiPaguyuban, navController: NavHostCont
             .padding(top = 12.dp)
             .fillMaxWidth()
             .clickable {
-                       navController.navigate("detail_paguyuban_screen/${paguyuban.id}")
+                navController.navigate("detail_paguyuban_screen/${paguyuban.id}")
             },
         colors = CardDefaults.cardColors(Color.Transparent)
     ) {
@@ -157,7 +160,7 @@ fun CardPaguyuban(paguyuban: DataRegistrasiPaguyuban, navController: NavHostCont
 }
 
 @Composable
-fun TopAdmin() {
+fun TopAdmin(navController: NavHostController) {
     Surface(
         color = primary,
         shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp),
@@ -165,18 +168,32 @@ fun TopAdmin() {
             .height(102.dp)
             .fillMaxWidth()
     ) {
+        Row(verticalAlignment = Alignment.CenterVertically,modifier = Modifier.padding(start = 20.dp)) {
 
-        Text(
-            text = stringResource(id = R.string.admin),
-            fontFamily = PoppinsFamily,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
-            style = LocalTextStyle.current.copy(
-                platformStyle = PlatformTextStyle(includeFontPadding = false)
-            ),
-            modifier = Modifier.padding(top = 16.dp, start = 20.dp)
-        )
+            Icon(
+                painter = painterResource(id = R.drawable.arrow_left),
+                contentDescription = "",
+                tint = Color.Black,
+                modifier = Modifier.clickable {
+                    navController.navigate(BottomBarScreen.Profil.route)
+                }
+            )
+
+            Text(
+                text = stringResource(id = R.string.admin),
+                fontFamily = PoppinsFamily,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black,
+                style = LocalTextStyle.current.copy(
+                    platformStyle = PlatformTextStyle(includeFontPadding = false)
+                ),
+                modifier = Modifier.padding(start = 26.dp)
+            )
+
+        }
+
+
 
     }
 }

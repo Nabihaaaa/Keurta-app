@@ -1,8 +1,6 @@
 package com.example.seccraft_app.screens.admin.detail
 
-import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -26,8 +24,10 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.seccraft_app.R
 import com.example.seccraft_app.screens.forum.ShowImage
+import com.example.seccraft_app.screens.kursus.add.konten.DataKontenModel
 import com.example.seccraft_app.screens.util.Accompanist
 import com.example.seccraft_app.ui.theme.*
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,6 +45,10 @@ fun DetailPaguyubanScreen(
     val context = LocalContext.current
     val paguyuban = detailPaguyubanModel.paguyuban.value
     var showDialog by remember { mutableStateOf(false) }
+    var approve by remember {
+        mutableStateOf(false)
+    }
+
 
     if (showDialog) {
         ShowImage(image = paguyuban.suratIzin) {
@@ -52,7 +56,25 @@ fun DetailPaguyubanScreen(
         }
     }
 
-    Scaffold(bottomBar = { DetailPaguyubanBottom() }) {
+    if (approve) {
+        AlertAprove(
+            navController = navController,
+            context = context,
+            detailPaguyubanModel = detailPaguyubanModel
+        ) {
+            approve = it
+        }
+    }
+
+    Scaffold(
+        bottomBar = {
+            DetailPaguyubanBottom(
+                approve = {
+                    approve = it
+                },
+            )
+        }
+    ) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -331,7 +353,7 @@ fun DetailPaguyubanScreen(
 }
 
 @Composable
-fun DetailPaguyubanBottom() {
+fun DetailPaguyubanBottom(approve: (Boolean) -> Unit) {
     Surface(modifier = Modifier.fillMaxWidth(), color = tertiary) {
         Row(
             modifier = Modifier
@@ -342,16 +364,14 @@ fun DetailPaguyubanBottom() {
         ) {
             Button(
                 onClick = {
-
+                    approve(true)
                 },
                 contentPadding = PaddingValues(0.dp),
                 colors = ButtonDefaults.buttonColors(
                     secondary
                 ),
                 shape = RoundedCornerShape(15.dp),
-                modifier = Modifier
-                    .padding(end = 20.dp)
-                    .width(140.dp)
+                modifier = Modifier.width(140.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.approve),
@@ -361,30 +381,72 @@ fun DetailPaguyubanBottom() {
                     modifier = Modifier.padding(vertical = 10.dp)
                 )
             }
-            Button(
-                onClick = {
 
-                },
-                contentPadding = PaddingValues(0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    Color.Red
-                ),
-                shape = RoundedCornerShape(15.dp),
-                modifier = Modifier.width(140.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.delete),
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-            }
         }
-
-
     }
 }
+
+@Composable
+fun AlertAprove(
+    navController: NavController,
+    context: Context,
+    detailPaguyubanModel: DetailPaguyubanModel,
+    showDialog: (Boolean) -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+    AlertDialog(
+        onDismissRequest = { showDialog(false) },
+        title = {
+            Text(
+                text = stringResource(id = R.string.konfirmasi_aprove),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(id = R.string.yakin_aprove),
+                style = MaterialTheme.typography.labelMedium
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    coroutineScope.launch {
+                        detailPaguyubanModel.approvedPaguyuban(navController, context)
+                        showDialog(false)
+                    }
+                },
+                shape = RoundedCornerShape(15.dp),
+                colors = ButtonDefaults.buttonColors(secondary)
+            ) {
+                Text(
+                    text = "Ya",
+                    style = MaterialTheme.typography.displayMedium,
+                    color = Color.White
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    showDialog(false)
+                },
+                shape = RoundedCornerShape(15.dp),
+                colors = ButtonDefaults.buttonColors(Color.Red)
+            ) {
+                Text(
+                    text = "Batal",
+                    style = MaterialTheme.typography.displayMedium,
+                    color = Color.White
+                )
+            }
+        },
+        containerColor = bg,
+        textContentColor = Color.Black
+    )
+}
+
+
 
 
 

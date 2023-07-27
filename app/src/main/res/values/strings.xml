@@ -145,6 +145,10 @@
     <string name="approve">Approve</string>
     <string name="delete">Delete</string>
     <string name="bukti_lain">Bukti Lainnya</string>
+    <string name="konfirmasi_aprove">Konfiramasi Approve</string>
+    <string name="yakin_aprove">Anda yakin ingin approve paguyuban ini?</string>
+    <string name="email_sub">Paguyuban berhasil diapproved!</string>
+    <string name="email_body">Registrasi kamu di aplikasi KEURTA sudah kami approved silahkan membuka aplikasi dan login. Terimakasih sudah bermitra bersama kami</string>
 
 
 </resources>
